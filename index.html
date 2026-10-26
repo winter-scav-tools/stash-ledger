@@ -252,12 +252,23 @@ td.for .rp{color:var(--frost)}
 .run.top{background:var(--red);border-color:var(--red);color:var(--bg)}
 .run{white-space:nowrap}
 .run small{font:12px var(--f-body);letter-spacing:0;text-transform:none;opacity:.85}
-@media (max-width:600px){.run{font-size:16px;letter-spacing:.02em;padding:5px 8px;gap:6px;max-width:100%}.goalbox{padding:12px}.goalbox thead{display:none}.goalbox tr{display:grid;grid-template-columns:1fr auto}.goalbox td{border-bottom:0}.goalbox td.maps{grid-column:1/-1;padding-top:0;border-bottom:1px solid var(--line)}}
+@media (max-width:600px){.run{font-size:16px;letter-spacing:.02em;padding:5px 8px;gap:6px;max-width:100%}.goalbox{padding:12px}.goalbox thead{display:none}.goalbox tr{display:grid;grid-template-columns:1fr auto}.goalbox td{border-bottom:0}.goalbox td.have{grid-column:1/-1;padding-top:0}.goalbox td.maps{grid-column:1/-1;padding-top:0;border-bottom:1px solid var(--line)}.havebox input[type=number]{width:64px;padding:8px}}
 @media (max-width:380px){.run{white-space:normal;flex-wrap:wrap;row-gap:2px}.run small{white-space:nowrap}}
 .goalbox table{min-width:0}
 .goalbox td.maps{color:var(--muted);font-size:12px}
 .goalbox td.maps b{color:var(--ink);font-weight:500}
 .maphead{margin-top:6px;color:var(--ink)}
+.havehint{margin:0;font-size:12px;color:var(--muted)}
+.goalbox td.have{white-space:nowrap}
+.havebox{display:inline-flex;align-items:center;gap:6px}
+.havebox input[type=number]{width:56px;font:14px var(--f-body);padding:5px 6px;background:var(--bg);color:var(--ink);border:1px solid var(--rail);-moz-appearance:textfield}
+.havebox input[type=number]::-webkit-inner-spin-button,.havebox input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.havebox input[type=number]:focus{border-color:var(--red)}
+.havebox .of,.goalbox .qty .of{font-size:12px;color:var(--muted)}
+.gotall{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);cursor:pointer;padding:4px 2px}
+.gotall input{accent-color:var(--red);width:18px;height:18px;margin:0}
+.goalbox tr.gotrow td{opacity:.55}
+.goalbox tr.gotrow td.name{text-decoration:line-through}
 .badge.goal{border-color:var(--red);color:var(--red)}
 .uprow{display:flex;align-items:center;gap:6px}
 .uprow label{flex:1;min-width:0}
@@ -421,7 +432,7 @@ footer b{color:var(--ink)}
 <footer>
   <span><b>?</b> = unverified. Checked one in-game and it's wrong? <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Found a mistake? Open an issue</a></span>
   <span><b>Unofficial fan-made tool,</b> not affiliated with Fun Dog Studios. Support the devs: <a href="https://store.steampowered.com/app/2828860/The_Forever_Winter/" target="_blank" rel="noopener">Steam</a> · <a href="https://store.epicgames.com/en-US/p/the-forever-winter-8b8280" target="_blank" rel="noopener">Epic Games Store</a> · <a href="https://www.fundogstudios.com/" target="_blank" rel="noopener">fundogstudios.com</a></span>
-  <span>Stash Ledger v0.9.1 · <b>Made by scavs, for scavs,</b> part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · Built with help from Claude (AI), no AI art · Data from <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a> under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026</span>
+  <span>Stash Ledger v0.9.2 · <b>Made by scavs, for scavs,</b> part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · Built with help from Claude (AI), no AI art · Data from <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a> under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026</span>
   <details class="fnotes"><summary>How to read this page</summary>
     <span>Keep counts are exact per upgrade and quest, so they drop as you tick. Crossed-out entries are uses you've finished.</span>
     <span>Ticks are saved in this browser only. To move them to another device, use "Back up or move progress" in the Innards log.</span>
@@ -825,6 +836,9 @@ const sp=s=>{const e=esc(s);return sf?e.replace(BOSS,spl):e};
 const spq=s=>sf?spl(esc(s)):esc(s);
 const box=(name,extra="",quest=false)=>{const id="c"+(uid++);return `<label class="${done[name]?"on":""}" for="${id}"><input type="checkbox" id="${id}" data-k="${esc(name)}" ${done[name]?"checked":""}><span class="t">${quest?spq(name):esc(name)}</span>${extra}</label>`};
 let goal="";try{goal=localStorage.getItem("tfw-goal")||""}catch(e){}
+// what you already have for each goal: {goalKey:{item:count}}
+let have={};try{have=JSON.parse(localStorage.getItem("tfw-have")||"{}")||{}}catch(e){have={}}
+const saveHave=()=>{try{localStorage.setItem("tfw-have",JSON.stringify(have))}catch(e){}};
 let ucol={};try{ucol=JSON.parse(localStorage.getItem("tfw-ucol")||"{}")}catch(e){ucol={}}
 const LINES={};STORY.forEach(q=>{const l=q.replace(/ Pt\.? ?\d+$/,"");(LINES[l]=LINES[l]||[]).push(q)});
 // Story chains in rough game order; each chain follows the wiki's questline steps
@@ -929,24 +943,36 @@ function drawGoalOptions(){
       const g=(LINES[e]&&LINES[e].length>1?"l:"+e:"q:"+parts[0]);return goalItems(g).length?`<option value="${esc(val)}">${sf?`Chain ${ci+1}, quest ${k}`:esc(LINES[e]&&LINES[e].length>1?e:parts[0])}</option>`:""}).join("");
     return o?`<optgroup label="${sf&&c.n!=="Tutorial"?"Story chain "+(ci+1)+" (name hidden: spoiler-free mode is on)":"Story: "+esc(c.n)}">${o}</optgroup>`:""}).join("");
   sel.innerHTML=`<option value="">No goal: just browse maps</option>`+ups+qs;
+  let pr=false;Object.keys(have).forEach(k=>{if(!goalItems(k).length){delete have[k];pr=true}});if(pr)saveHave();
   sel.value=[...sel.options].some(o=>o.value===goal)?goal:"";if(sel.value!==goal){goal=sel.value;saveGoal()}
 }
 const saveGoal=()=>{try{localStorage.setItem("tfw-goal",goal)}catch(e){}};
 function renderGoal(){
   const gr=document.getElementById("goalres");
   if(!goal){gr.innerHTML="";return null}
-  const items=goalItems(goal);const name=goalLabel(goal),isQ=goal[0]!=="u";
+  const all=goalItems(goal);const name=goalLabel(goal),isQ=goal[0]!=="u";
   const title=isQ?spq(name):esc(name);
-  if(!items.length){gr.innerHTML=`<div class="goalbox"><span class="goalsum"><b>${title}</b>: nothing left to collect. Build it or turn it in!</span></div>`;return {name,left:0}}
+  if(!all.length){gr.innerHTML=`<div class="goalbox"><span class="goalsum"><b>${title}</b>: nothing left to collect. Build it or turn it in!</span></div>`;return {name,left:0}}
+  const H=have[goal]||{};
+  all.forEach(x=>{x.got=Math.min(x.need,Math.max(0,+H[x.it.n]||0));x.left=x.need-x.got});
+  const items=all.filter(x=>x.left>0),gotAll=all.filter(x=>!x.left);
+  const sorted=[...items.sort((a,b)=>b.left-a.left),...gotAll];
+  if(!items.length){gr.innerHTML=`<div class="goalbox"><span class="goalsum"><b>${title}</b>: you have everything. Go build it!</span><div class="table-box"><table><tbody>${sorted.map(goalRow).join("")}</tbody></table></div></div>`;return {name,left:0}}
   const score=MAPS.map((m,i)=>{let c=0,s=0;items.forEach(({it})=>{const L=lvOf(it.n);if(L&&L[i]){c++;s+=L[i]}});return {i,c,s}}).filter(x=>x.c).sort((a,b)=>b.c-a.c||b.s-a.s);
   const runs=score.slice(0,4).map((x,k)=>`<button class="run${k===0?" top":""}" type="button" data-run="${x.i}">${esc(MAPS[x.i])}<small>${x.c}/${items.length} items</small></button>`).join("");
-  const rows=items.map(({it,need})=>{const L=lvOf(it.n);let maps="";
-    if(L){const top=L.map((v,i)=>({v,i})).filter(x=>x.v).sort((a,b)=>b.v-a.v).slice(0,3);maps=top.map(x=>`<b>${esc(MAPS[x.i])}</b> ${sp(srcOn(it.n,x.i)||"")}`).join("<br>")}
-    else maps=esc(it.note||"no spawn data");
-    return `<tr><td class="name">${sp(it.n)}${uMark(it)}</td><td class="qty">×${need}</td><td class="maps">${maps}</td></tr>`}).join("");
   const best=score[0];
-  gr.innerHTML=`<div class="goalbox"><span class="goalsum"><b>${title}</b> still needs ${items.length} item${items.length===1?"":"s"}.${best?` Best run: <b>${esc(MAPS[best.i])}</b>, which has ${best.c} of them. Tap a map to browse it below.`:""}</span>${runs?`<div class="runs">${runs}</div>`:""}<div class="table-box"><table><thead><tr><th>Item</th><th>Need</th><th>Best maps · where</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+  const gotTxt=gotAll.length?` You have ${gotAll.length} of ${all.length} already.`:"";
+  gr.innerHTML=`<div class="goalbox"><span class="goalsum"><b>${title}</b> still needs ${items.length} item${items.length===1?"":"s"}.${gotTxt}${best?` Best run: <b>${esc(MAPS[best.i])}</b>, which has ${best.c} of them. Tap a map to browse it below.`:""}</span>${runs?`<div class="runs">${runs}</div>`:""}<p class="havehint">Already have some? Type how many in <b>Have</b>, or tick the box if you have them all.</p><div class="table-box"><table><thead><tr><th>Item</th><th>Need</th><th>Have</th><th>Best maps · where</th></tr></thead><tbody>${sorted.map(goalRow).join("")}</tbody></table></div></div>`;
   return {name,left:items.length,best:best&&MAPS[best.i],set:new Set(items.map(x=>x.it.n))};
+}
+function goalRow({it,need,got,left}){
+  const L=lvOf(it.n);let maps="";
+  if(!left)maps="got them all";
+  else if(L){const top=L.map((v,i)=>({v,i})).filter(x=>x.v).sort((a,b)=>b.v-a.v).slice(0,3);maps=top.map(x=>`<b>${esc(MAPS[x.i])}</b> ${sp(srcOn(it.n,x.i)||"")}`).join("<br>")}
+  else maps=esc(it.note||"no spawn data");
+  const id="h"+(uid++),n=esc(it.n);
+  const qty=got&&left?`${left} <span class="of">left of ${need}</span>`:`×${need}`;
+  return `<tr class="${left?"":"gotrow"}"><td class="name">${sp(it.n)}${uMark(it)}</td><td class="qty">${qty}</td><td class="have"><span class="havebox"><input type="number" inputmode="numeric" min="0" max="${need}" step="1" value="${got||""}" placeholder="0" data-have="${n}" data-need="${need}" aria-label="How many ${n} you have"><span class="of">/ ${need}</span><label class="gotall" for="${id}"><input type="checkbox" id="${id}" data-gotall="${n}" data-need="${need}" ${left?"":"checked"}><span>got all</span></label></span></td><td class="maps">${maps}</td></tr>`;
 }
 function renderMaps(){
   const box=document.getElementById("mapres"),sum=document.getElementById("mapsum");
@@ -1000,6 +1026,11 @@ let showAllNeed=false;
 const gs=document.getElementById("goalsel");
 gs.addEventListener("change",()=>{goal=gs.value;saveGoal();drawProgress();renderMaps()});
 function setGoal(g){goal=g;saveGoal();drawGoalOptions();gs.value=goal;drawProgress();renderMaps();const m=document.getElementById("mapbox");m.open=true;if(tabMode()){setTab("raid");return}m.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})}
+const setHave=(n,v,need)=>{const g=have[goal]=have[goal]||{};v=Math.max(0,Math.min(need,Math.floor(+v||0)));if(v)g[n]=v;else delete g[n];if(!Object.keys(g).length)delete have[goal];saveHave();renderMaps()};
+document.getElementById("goalres").addEventListener("change",e=>{const t=e.target;
+  if(t.dataset.have!==undefined)setHave(t.dataset.have,t.value,+t.dataset.need);
+  else if(t.dataset.gotall!==undefined)setHave(t.dataset.gotall,t.checked?+t.dataset.need:0,+t.dataset.need)});
+document.getElementById("goalres").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.dataset.have!==undefined)e.target.blur()});
 document.getElementById("goalres").addEventListener("click",e=>{const b=e.target.closest(".run");if(!b)return;const i=+b.dataset.run;selMaps=[i];saveMaps();drawMapChecks();renderMaps();document.getElementById("mapchecks").scrollIntoView({behavior:"smooth",block:"nearest"})});
 document.getElementById("mapres").addEventListener("click",e=>{if(e.target.id==="needall"){showAllNeed=!showAllNeed;renderMaps()}});
 document.getElementById("ups").addEventListener("click",e=>{const t=e.target.closest(".tgt");if(t){e.preventDefault();setGoal(goal===t.dataset.goal?"":t.dataset.goal);return}});
@@ -1032,7 +1063,7 @@ rb.addEventListener("click",()=>{
 // ---- backup / move progress ----
 const BK_KEYS=["tfw-done","tfw-goal","tfw-maps","tfw-sf","tfw-cb","tfw-sort","tfw-ucol"];
 const bkMsg=(t,bad)=>{const m=document.getElementById("bkmsg");m.textContent=t;m.className="bkmsg"+(bad?" bad":"")};
-const bkCode=()=>{const o={v:1,done,goal,maps:selMaps,sf:sf?1:0,cb:cb?1:0,ucol};return "TFWL1."+btoa(unescape(encodeURIComponent(JSON.stringify(o))))};
+const bkCode=()=>{const o={v:1,done,goal,maps:selMaps,sf:sf?1:0,cb:cb?1:0,ucol,have};return "TFWL1."+btoa(unescape(encodeURIComponent(JSON.stringify(o))))};
 const bkTa=document.getElementById("bkcode");
 document.getElementById("backup").addEventListener("toggle",e=>{if(e.target.open&&!bkTa.value){bkTa.value=bkCode()}});
 document.getElementById("bkcopy").addEventListener("click",async()=>{bkTa.value=bkCode();bkTa.focus();bkTa.select();
@@ -1045,7 +1076,7 @@ document.getElementById("bkload").addEventListener("click",()=>{
   undoDone=done;
   done={};Object.keys(o.done||{}).forEach(k=>{if(o.done[k])done[k]=1});
   selMaps=Array.isArray(o.maps)?o.maps.filter(i=>Number.isInteger(i)&&i>=0&&i<MAPS.length):[];
-  goal=typeof o.goal==="string"?o.goal:"";ucol=o.ucol&&typeof o.ucol==="object"?o.ucol:{};
+  goal=typeof o.goal==="string"?o.goal:"";ucol=o.ucol&&typeof o.ucol==="object"?o.ucol:{};have=o.have&&typeof o.have==="object"?o.have:{};saveHave();
   sf=!!o.sf;cb=!!o.cb;
   try{localStorage.setItem("tfw-done",JSON.stringify(done));localStorage.setItem("tfw-maps",JSON.stringify(selMaps));localStorage.setItem("tfw-goal",goal);localStorage.setItem("tfw-ucol",JSON.stringify(ucol));localStorage.setItem("tfw-sf",sf?"1":"0");localStorage.setItem("tfw-cb",cb?"1":"0")}catch(e){}
   applySf();applyCb();drawMapChecks();drawProgress();render();
