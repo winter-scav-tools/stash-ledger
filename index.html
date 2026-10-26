@@ -296,6 +296,10 @@ td.for .rp{color:var(--frost)}
 }
 footer{color:var(--muted);font-size:12px;display:flex;flex-direction:column;gap:6px;max-width:80ch;border-top:1px solid var(--line);padding-top:16px}
 footer b{color:var(--ink)}
+.fnotes{display:flex;flex-direction:column;gap:6px}
+.fnotes>summary{cursor:pointer;color:var(--ink);width:max-content}
+.fnotes[open]{display:flex}
+.fnotes>span{display:block;margin-top:6px}
 </style>
 </head>
 <body>
@@ -315,7 +319,7 @@ footer b{color:var(--ink)}
       <li><span><b>? means unverified.</b> Check those in-game. The reason is under the item name.</span></li>
     </ol>
     <div class="row"><button type="button" class="pri" id="intro-go">Got it, open the ledger</button></div>
-    <p class="fine">Reopen this any time with "? How it works" at the top. Fan-made and unofficial, built with help from AI (no AI art). The footer says how.</p>
+    <p class="fine">Reopen this any time with "? How it works" at the top. Fan-made and unofficial, built with help from AI (no AI art).</p>
   </div>
 </dialog>
 <header class="hdr scan">
@@ -415,14 +419,16 @@ footer b{color:var(--ink)}
 </nav>
 
 <footer>
-  <span>Keep counts are exact per upgrade and quest, so they drop as you tick. Crossed-out entries are uses you've finished. Ticks are saved in this browser only, so you and your friend each track your own. To move them to another device, use "Back up or move progress" in the Innards log.</span>
-  <span>Rows marked <b>?</b> are unverified. The reason is under the item name, and the "? Unverified" filter lists them all. If you check one in-game and it's wrong, open an issue. <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Found a mistake? Open an issue</a></span>
-  <span>Per space is credits per unit of rig space, for deciding what to drop when your rig is full. Large-bin items have their own slot, so they aren't compared.</span>
-  <span>Not listed: weapons, ammo, gun attachments (sell any you don't run), and your own kit like med kits, grenades, turrets and rig lights.</span>
-  <span><b>How it's made.</b> Built by NotBlind Media with help from Claude, an AI. The AI writes the code and pulls the numbers from the wiki, which is how one fan can keep this up to date after every patch. The data itself comes from the wiki's human editors, players check it in-game (that's what the <b>?</b> marks are for), and there's no AI art or game art anywhere on the page.</span>
-  <span><b>Made by scavs, for scavs.</b> Part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a>, fan-made tools for The Forever Winter.</span>
-  <span><b>Unofficial fan-made tool.</b> Not affiliated with or endorsed by Fun Dog Studios. Like the game? Support the devs: <a href="https://store.steampowered.com/app/2828860/The_Forever_Winter/" target="_blank" rel="noopener">Steam</a> · <a href="https://store.epicgames.com/en-US/p/the-forever-winter-8b8280" target="_blank" rel="noopener">Epic Games Store</a> · <a href="https://www.fundogstudios.com/" target="_blank" rel="noopener">fundogstudios.com</a>. Item data is from <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a> under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</span>
-  <span>Stash Ledger v0.9. Data pulled from <a href="https://theforeverwinter.wiki.gg/wiki/Items" target="_blank" rel="noopener">The Forever Winter Wiki</a> item database on 25 Oct 2026. Prices can still drift after patches, so trust the in-game vendor number.</span>
+  <span><b>?</b> = unverified. Checked one in-game and it's wrong? <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Found a mistake? Open an issue</a></span>
+  <span><b>Unofficial fan-made tool,</b> not affiliated with Fun Dog Studios. Support the devs: <a href="https://store.steampowered.com/app/2828860/The_Forever_Winter/" target="_blank" rel="noopener">Steam</a> · <a href="https://store.epicgames.com/en-US/p/the-forever-winter-8b8280" target="_blank" rel="noopener">Epic Games Store</a> · <a href="https://www.fundogstudios.com/" target="_blank" rel="noopener">fundogstudios.com</a></span>
+  <span>Stash Ledger v0.9.1 · <b>Made by scavs, for scavs,</b> part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · Built with help from Claude (AI), no AI art · Data from <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a> under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026</span>
+  <details class="fnotes"><summary>How to read this page</summary>
+    <span>Keep counts are exact per upgrade and quest, so they drop as you tick. Crossed-out entries are uses you've finished.</span>
+    <span>Ticks are saved in this browser only. To move them to another device, use "Back up or move progress" in the Innards log.</span>
+    <span>Per space is credits per unit of rig space, for deciding what to drop when your rig is full. Large-bin items have their own slot.</span>
+    <span>Not listed: weapons, ammo, gun attachments (sell any you don't run), and your own kit like med kits, grenades, turrets and rig lights.</span>
+    <span>Prices can drift after patches, so trust the in-game vendor number.</span>
+  </details>
 </footer>
 </div>
 
@@ -540,7 +546,7 @@ R("Euruskan Plans",3075,{},[],[["Unravel Euruskan Mysteries",3,1]]),
 R("Exo Component",9225,{},["Exo Stamina Equipment"],[["Armored Treasure",3,1]]),
 R("Exo Hard Drive",11275,{},[],[["Cracked Open",2,1]]),
 R("Exo Repair Kit",24600),
-R("Explosive Charge",0,{},[],[["Achilles' Heel",5,0]]),
+R("Explosive Charge",0,{},["40mm Grenade","Special Units DetPack"],[["Achilles' Heel",5,0]]),
 R("Explosives",8329,{"Personal Quarters":8},["IED","Gunpowder","Frag Grenade","20x105mm Anti-Tank"],[["Risky Cargo",2,1]],"large slot"),
 R("Family Photo",3075,{},[],[],"quest item with no listed quest"),
 R("Fertilizer",410,{},["12-Gauge Buckshot","9x19mm Ammo"]),
@@ -672,7 +678,7 @@ R("Rat King Codex",0,{"Bar V3":1},[],[],"boss drop"),
 R("Rat King's Wake",0,{"Shrine":1},[],[["King of Kings",25,1]],"boss drop"),
 R("Ratchet",3844,{"Garage":1}),
 R("Rechargeable Battery",1537,{"TV Small":6},["Power Cell"]),
-R("Recovery Drone",0,{},[],[["Achilles' Heel",1,0]],"crafted at the Workshop"),
+R("Recovery Drone",0,{},["Item Extraction Beacon"],[["Achilles' Heel",1,0]],"crafted at the Workshop"),
 R("Relay",1794,{"TV Mega":10},["Electric Motor"]),
 R("Repair Dronelet",13325,{},["Recovery Drone"]),
 R("Ribbed Tube",1179,{"The Bar":8}),
@@ -694,7 +700,7 @@ R("Sledgehammer",10762,{"+28 days":1}),
 R("Smuggled Organs",27675,{"Shrine":1},["Food Tin ×8"],[],"best dog food"),
 R("Soap",17425),
 R("Solar Battery",24600,{"TV Mega":1}),
-R("Spare Part",9310,{},[],[["Food Chain Interrupted",1,1]],"large slot"),
+R("Spare Part",8329,{},[],[["Food Chain Interrupted",1,1]],"large slot"),
 R("Spark Plug",3075),
 R("Stereo Box",13325,{},[],[],"shelf decoration"),
 R("Stethoscope",4612),
@@ -749,6 +755,7 @@ R("Foregrips, grips, stocks, mags, barrels",9225,{},[],[],"loose gun parts · se
 R("Rail flashlights, laser sights, scopes",8386,{},[],[],"great value per slot"),
 R("Destroyed HMG / grenade launcher / auto shotgun",0,{},[],[],"repair at Weapon Repairs first, then sell")
 ];
+ITEMS.push(R("Paper Scrap",0,{},[],[["Transmission Tower Pt. 3",1,0]],"no vendor value on the wiki"));
 ITEMS.push(R("Adrenaline Stim",4100,{},[],[["Violence of Action",1,0]]));
 // Unverified rows: shown with a "?" so anyone can check them in-game
 const UNSURE={
@@ -763,7 +770,7 @@ const UNSURE={
 "Recovery Drone":"An older guide said 5 for Achilles' Heel. The current database says 1.",
 "Frequency Tap":"The wiki lists ×3 three separate times for Transmission Tower Pt. 1, so it may only need 3 in total.",
 "Family Photo":"Marked as a quest item, but no quest is linked to it.",
-"Spare Part":"Only appears on one older wiki page. Price and quest are unconfirmed."
+"Spare Part":"The price is from the wiki's item list, but the quest that uses it is only on one older wiki page."
 };
 // Alcohol: The Bar's regulars take drinks for loyalty (spoiler), so never dump it all
 const BAR=["Absinthe","Beer","Brandy","Ethyl Alcohol","Gin","Mead","Mezcal","Rum","Scotch","Tequila","Vodka","Whiskey","Wine"];
@@ -781,8 +788,8 @@ const TJ_ITEM="Tobacco Journey: Lordoss's running cigarette deliveries";
 const LINE_NOTE={"Tobacco Journey":TJ_NOTE};
 ITEMS.forEach(it=>{if(it.note)it.note=it.note.split(" · ").filter(p=>!/dog food/.test(p)).join(" · ");if(DOG[it.n])it.dog=DOG[it.n]});
 // Upgrade credit cost and build time from the wiki
-const COST={"+16 days":[175000,"1 h"],"+28 days":[750000,"6 h"],"Water Bots V1":[50000,"1 h"],"Water Bots V2":[250000,"6 h"],"Water Bots V3":[750000,"12 h"],"Turrets V1":[75000,"1 h"],"Turrets V2":[150000,"6 h"],"Turrets V3":[500000,"12 h"],"Workshop":[75000,"2 h"],"Munitions Printer":[150000,"2 h"],"Manufacture Booster":[332800,"2 h"],"Repair Bench":[150000,"1 h"],"The Bar":[250000,"6 h"],"Bar V1":[750000,"12 h"],"Bar V2":[1500000,"1 day"],"Bar V3":[2500000,"2 days"],"Transmission Tower":[5000000,"24 h"],"Personal Quarters":[75000,"6 h"],"Quarters v1":[250000,"6 h"],"Quarters v2":[750000,"1 day"],"Quarters v3":[1500000,"2 days"],"Shooting Range":[50000,"6 h"],"Range v1":[125000,"12 h"],"Range v2":[250000,"1 day"],"Range v3":[500000,"2 days"],"Cognition Cradle":[2000000,"12 h"],"Cradle Frame":[3500000,"1 day"],"Cradle Chamber":[5000000,"2 days"],"Dog House":[250000,"1 h"],"Garage":[2500000,"24 h"],"TV Small":[75000,"30 min"],"TV Mega":[1000000,"1.5 h"],"Music System":[25000,"2 h"],"Special Tree":[100000,"45 min"],"Shrine":[2500000,"1 day"]};
-const COST_UNSURE={"Personal Quarters":1,"Quarters v1":1};
+const COST={"+16 days":[175000,"1 h"],"+28 days":[750000,"6 h"],"Water Bots V1":[50000,"1 h"],"Water Bots V2":[250000,"6 h"],"Water Bots V3":[750000,"12 h"],"Turrets V1":[75000,"1 h"],"Turrets V2":[150000,"6 h"],"Turrets V3":[500000,"12 h"],"Workshop":[75000,"2 h"],"Munitions Printer":[150000,"2 h"],"Manufacture Booster":[332800,"2 h"],"Repair Bench":[150000,"1 h"],"The Bar":[250000,"6 h"],"Bar V1":[750000,"12 h"],"Bar V2":[1500000,"1 day"],"Bar V3":[2500000,"2 days"],"Transmission Tower":[5000000,"24 h"],"Personal Quarters":[325000,"6 h"],"Quarters v1":[250000,"6 h"],"Quarters v2":[750000,"1 day"],"Quarters v3":[1500000,"2 days"],"Shooting Range":[50000,"6 h"],"Range v1":[125000,"12 h"],"Range v2":[250000,"1 day"],"Range v3":[500000,"2 days"],"Cognition Cradle":[2000000,"12 h"],"Cradle Frame":[3500000,"1 day"],"Cradle Chamber":[5000000,"2 days"],"Dog House":[250000,"1 h"],"Garage":[2500000,"24 h"],"TV Small":[75000,"30 min"],"TV Mega":[1000000,"1.5 h"],"Music System":[25000,"2 h"],"Special Tree":[100000,"45 min"],"Shrine":[2500000,"1 day"]};
+const COST_UNSURE={};
 const COST_UNSURE_TXT="The wiki lists two prices under Personal Quarters (75k and 250k). We assumed the second is the v1 upgrade.";
 const NEEDS={};ITEMS.forEach(it=>Object.entries(it.b).forEach(([u,a])=>(NEEDS[u]=NEEDS[u]||[]).push([it.n,a])));
 const kfmt=n=>n>=1e6?(Math.round(n/1e5)/10)+"M":n>=1e3?Math.round(n/1e3)+"k":String(n);
