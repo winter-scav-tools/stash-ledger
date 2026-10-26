@@ -2,6 +2,8 @@
 
 A fan-made keep/sell guide for **The Forever Winter**.
 
+Current version: **v0.9** · Live page: https://winter-scav-tools.github.io/stash-ledger/
+
 - **Keep or sell:** tick the Innards upgrades you've built and the story quests you've finished. Keep counts drop as you go, and items flip to *Sell now* once nothing needs them.
 - **Raid planner:** pick an upgrade or quest as your goal to see what it still needs and which map has the most of it. Or skip the goal and tick maps to browse what's worth grabbing there.
 - **Story quests in order:** grouped by chain, with who gives each one.
@@ -15,7 +17,9 @@ Progress is saved in your own browser only. To move it to another device, use *B
 
 ## Credits
 
-**Made by scavs, for scavs.** Part of [Winter Scav Tools](https://github.com/winter-scav-tools), fan-made tools for The Forever Winter. Live page: https://winter-scav-tools.github.io/stash-ledger/
+**Made by scavs, for scavs.** Part of [Winter Scav Tools](https://github.com/winter-scav-tools), fan-made tools for The Forever Winter.
+
+**How it's made.** Built by NotBlind Media with help from Claude, an AI. The AI writes the code and pulls the numbers from the wiki, which is how one fan can keep this up to date after every patch. The data itself comes from the wiki's human editors, players check it in-game (that's what the **?** marks are for), and there's no AI art or game art anywhere on the page.
 
 Unofficial fan-made tool. Not affiliated with or endorsed by Fun Dog Studios. No game art is used.
 

@@ -12,6 +12,8 @@ img{max-width:100%}
 [hidden]{display:none!important}
 </style>
 <title>Forever Winter Stash Ledger</title>
+<meta name="color-scheme" content="dark">
+<meta name="darkreader-lock">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=JetBrains+Mono:wght@400;500;700&display=swap">
@@ -25,6 +27,9 @@ img{max-width:100%}
   --f-body:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
   color-scheme:dark;
 }
+/* The page is already dark: telling the browser so stops phone "dark mode for websites" from recoloring it (it turned the yellow colorblind accents brown) */
+@media (prefers-color-scheme:dark){:root{color-scheme:dark}}
+@media (prefers-color-scheme:light){:root{color-scheme:dark}}
 /* Colorblind mode: yellow + sky blue stay apart for red-green colorblindness; frost goes neutral so it can't be mixed up with blue */
 :root[data-cb="1"]{--red:#f2c230; --amber:#5ab4f0; --frost:#c7cfcd}
 body{background:var(--bg);color:var(--ink);font:14px/1.55 var(--f-body)}
@@ -61,7 +66,7 @@ h3{margin:0;font:400 20px/1.1 var(--f-display);letter-spacing:.08em;text-transfo
 .sfbtn{width:100%;display:flex;align-items:center;gap:18px;text-align:left;padding:16px 20px;background:var(--panel);color:var(--ink);border:2px solid var(--red);cursor:pointer;font:inherit}
 .sfbtn:hover{background:var(--panel2)}
 .viewopts{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:-10px}
-.cbbtn{display:inline-flex;white-space:nowrap;flex:none;align-items:center;gap:10px;font:20px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border:1px solid var(--rail);background:var(--panel);color:var(--ink);cursor:pointer}
+.cbbtn{display:inline-flex;white-space:nowrap;max-width:100%;align-items:center;gap:10px;font:20px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border:1px solid var(--rail);background:var(--panel);color:var(--ink);cursor:pointer}
 .cbbtn:hover{border-color:var(--ink)}
 .cbbtn b{font-weight:400;color:var(--muted)}
 .cbbtn .dot{width:22px;height:10px;background:linear-gradient(90deg,var(--red) 50%,var(--amber) 50%)}
@@ -78,7 +83,7 @@ h3{margin:0;font:400 20px/1.1 var(--f-display);letter-spacing:.08em;text-transfo
 .sfbtn[aria-pressed="true"] .bang{background:var(--bg);color:var(--red)}
 .sfbtn[aria-pressed="true"] .txt strong,.sfbtn[aria-pressed="true"] .state{color:var(--bg)}
 .sfbtn[aria-pressed="true"] .txt span{color:var(--bg);font-weight:500}
-@media (max-width:560px){.sfbtn{gap:12px;padding:12px 14px}.sfbtn .txt strong{font-size:26px}.sfbtn .bang{width:38px;height:38px;font-size:34px}.sfbtn .state{display:none}}
+@media (max-width:560px){.cbbtn{font-size:18px;gap:8px;padding:6px 10px}.sfbtn{gap:12px;padding:12px 14px}.sfbtn .txt strong{font-size:26px}.sfbtn .bang{width:38px;height:38px;font-size:34px}.sfbtn .state{display:none}}
 .spoil{filter:blur(5px);cursor:pointer;background:var(--line);transition:filter .15s}
 .spoil.shown{filter:none;background:none}
 @media (prefers-reduced-motion:reduce){.spoil{transition:none}}
@@ -268,6 +273,27 @@ td.for .rp{color:var(--frost)}
 .giver{display:block;padding:0 0 4px 20px;font-size:12px;color:var(--frost)}
 .chain .grp{padding-left:12px}
 .qorder{font-size:12px;color:var(--muted)}
+.tabbar{display:none}
+@media (max-width:880px){
+  :root[data-tab] [data-pane]{display:none}
+  :root[data-tab="items"] [data-pane~="items"],:root[data-tab="log"] [data-pane~="log"],:root[data-tab="raid"] [data-pane~="raid"],:root[data-tab="traps"] [data-pane~="traps"]{display:revert}
+  :root[data-tab="items"] .sec[data-pane],:root[data-tab="log"] .sec[data-pane]{display:flex}
+  :root[data-tab="items"] .bench[data-pane],:root[data-tab="log"] .bench[data-pane]{display:grid}
+  :root[data-tab="items"] .progress[data-pane]{display:none}
+  :root[data-tab="log"] .progress[data-pane]{display:flex}
+  :root[data-tab="raid"] #mapbox>summary,:root[data-tab="traps"] #trapbox>summary{pointer-events:none}
+  :root[data-tab="raid"] #mapbox>summary::after,:root[data-tab="traps"] #trapbox>summary::after{content:none}
+  .tabbar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--panel);border-top:2px solid var(--red);padding:0 env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px)}
+  .tabbar button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:58px;padding:6px 2px;border:0;border-right:1px solid var(--line);background:transparent;color:var(--muted);font:20px/1 var(--f-display);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+  .tabbar button:last-child{border-right:0}
+  .tabbar .ti{font:16px/1 var(--f-body);color:var(--dim)}
+  .tabbar button[aria-selected="true"]{background:var(--red);color:var(--bg)}
+  .tabbar button[aria-selected="true"] .ti{color:var(--bg)}
+  .tdot{position:absolute;top:8px;right:calc(50% - 26px);width:7px;height:7px;background:var(--red)}
+  .tabbar button[aria-selected="true"] .tdot{background:var(--bg)}
+  .wrap{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  #panetop{scroll-margin-top:8px}
+}
 footer{color:var(--muted);font-size:12px;display:flex;flex-direction:column;gap:6px;max-width:80ch;border-top:1px solid var(--line);padding-top:16px}
 footer b{color:var(--ink)}
 </style>
@@ -283,13 +309,13 @@ footer b{color:var(--ink)}
       <div class="row"><button type="button" id="intro-sf" aria-pressed="false">Spoiler-free: off</button><button type="button" id="intro-cb" aria-pressed="false">Colorblind mode: off</button></div>
     </div>
     <ol>
-      <li><span><b>Tick what you've done.</b> In the Innards log, tick the upgrades you've built and the story quests you've finished.</span></li>
+      <li><span><b>Tick what you've done.</b> In the Innards log (the Log tab on phones), tick the upgrades you've built and the story quests you've finished.</span></li>
       <li><span><b>Read the verdict.</b> Every item says Sell now, Keep, Craft stock or Keep a few. Keep counts drop as you tick things off.</span></li>
-      <li><span><b>Plan a raid.</b> In the Raid planner, pick an upgrade or quest as your goal to see which map has the most of what you need. Or skip the goal and just tick maps to browse.</span></li>
+      <li><span><b>Plan a raid.</b> In the Raid planner (the Raid tab on phones), pick an upgrade or quest as your goal to see which map has the most of what you need. Or skip the goal and just tick maps to browse.</span></li>
       <li><span><b>? means unverified.</b> Check those in-game. The reason is under the item name.</span></li>
     </ol>
     <div class="row"><button type="button" class="pri" id="intro-go">Got it, open the ledger</button></div>
-    <p class="fine">Reopen this any time with "? How it works" at the top. Fan-made and unofficial.</p>
+    <p class="fine">Reopen this any time with "? How it works" at the top. Fan-made and unofficial, built with help from AI (no AI art). The footer says how.</p>
   </div>
 </dialog>
 <header class="hdr scan">
@@ -302,7 +328,8 @@ footer b{color:var(--ink)}
 <button class="sfbtn" id="sfbtn" type="button" aria-pressed="false"><span class="bang" aria-hidden="true">!</span><span class="txt"><strong id="sftitle">Spoiler-free mode</strong><span id="sfsub">Turn on to blur quest names, bosses and secret spots. Tap any blurred name to peek.</span></span><span class="state" id="sfstate">[ OFF ]</span><span class="sw" aria-hidden="true"></span></button>
 <div class="viewopts"><button class="cbbtn" id="cbbtn" type="button" aria-pressed="false"><span class="dot" aria-hidden="true"></span>Colorblind mode <b id="cbstate">[ OFF ]</b></button><span class="cbhint" id="cbhint">Swaps the red and amber for yellow and blue, which stay easy to tell apart with red-green colorblindness.</span></div>
 
-<details class="mapbox" id="trapbox" open>
+<div id="panetop" aria-hidden="true"></div>
+<details class="mapbox" id="trapbox" data-pane="traps" open>
   <summary><span>LOOKALIKE TRAPS</span><small>8 pairs that get sold by accident</small></summary>
   <div class="mapbody">
   <p>The left one sells. The right one looks the same in a hurry and is needed.</p>
@@ -319,7 +346,7 @@ footer b{color:var(--ink)}
   </div>
 </details>
 
-<details class="mapbox" id="mapbox">
+<details class="mapbox" id="mapbox" data-pane="raid">
   <summary><span>RAID PLANNER</span><small id="mapsum">pick a goal or a map</small></summary>
   <div class="mapbody">
     <p>Two ways to use it. Pick a <b>goal</b> to see what that upgrade or quest still needs and which map covers the most of it. Or skip the goal and just tick the maps you're running to browse what's worth grabbing there.</p>
@@ -331,11 +358,11 @@ footer b{color:var(--ink)}
   </div>
 </details>
 
-<section class="sec" aria-labelledby="bench-h">
-  <h2 id="bench-h">Scav manifest: keep or sell</h2>
-  <p><b>Sell now</b> starts with everything that has no use at all and grows as you tick progress. Items that only feed crafting drop to <b>Craft stock</b> so you keep a few. Repeatable quest items stay as <b>Keep a few</b> because those quests come back.</p>
-  <div class="bench">
-    <aside class="progress" aria-label="Innards progress">
+<section class="sec" aria-labelledby="bench-h" data-pane="items log">
+  <h2 id="bench-h" data-pane="items">Scav manifest: keep or sell</h2>
+  <p data-pane="items"><b>Sell now</b> starts with everything that has no use at all and grows as you tick progress. Items that only feed crafting drop to <b>Craft stock</b> so you keep a few. Repeatable quest items stay as <b>Keep a few</b> because those quests come back.</p>
+  <div class="bench" data-pane="items log">
+    <aside class="progress" aria-label="Innards progress" data-pane="log">
       <div class="head"><h3>Innards log</h3><span class="freed" id="freed"></span></div>
       <span class="togo" id="togo"></span>
       <div id="ups" style="display:flex;flex-direction:column;gap:14px"></div>
@@ -348,7 +375,7 @@ footer b{color:var(--ink)}
         <span class="bkmsg" id="bkmsg" role="status" aria-live="polite"></span>
       </div></details>
     </aside>
-    <div style="min-width:0">
+    <div style="min-width:0" data-pane="items">
       <div class="tools">
         <input id="q" type="search" placeholder="> search an item, upgrade or quest_" aria-label="Search items">
         <div class="chips" role="group" aria-label="Filter">
@@ -380,14 +407,22 @@ footer b{color:var(--ink)}
   </div>
 </section>
 
+<nav class="tabbar" id="tabbar" role="tablist" aria-label="Sections">
+  <button type="button" role="tab" data-tab="items" aria-selected="true"><span class="ti" aria-hidden="true">≡</span>Items</button>
+  <button type="button" role="tab" data-tab="log" aria-selected="false"><span class="ti" aria-hidden="true">✓</span>Log</button>
+  <button type="button" role="tab" data-tab="raid" aria-selected="false"><span class="ti" aria-hidden="true">⌖</span>Raid<span class="tdot" id="tdot" hidden></span></button>
+  <button type="button" role="tab" data-tab="traps" aria-selected="false"><span class="ti" aria-hidden="true">≠</span>Traps</button>
+</nav>
+
 <footer>
   <span>Keep counts are exact per upgrade and quest, so they drop as you tick. Crossed-out entries are uses you've finished. Ticks are saved in this browser only, so you and your friend each track your own. To move them to another device, use "Back up or move progress" in the Innards log.</span>
   <span>Rows marked <b>?</b> are unverified. The reason is under the item name, and the "? Unverified" filter lists them all. If you check one in-game and it's wrong, open an issue. <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Found a mistake? Open an issue</a></span>
   <span>Per space is credits per unit of rig space, for deciding what to drop when your rig is full. Large-bin items have their own slot, so they aren't compared.</span>
   <span>Not listed: weapons, ammo, gun attachments (sell any you don't run), and your own kit like med kits, grenades, turrets and rig lights.</span>
+  <span><b>How it's made.</b> Built by NotBlind Media with help from Claude, an AI. The AI writes the code and pulls the numbers from the wiki, which is how one fan can keep this up to date after every patch. The data itself comes from the wiki's human editors, players check it in-game (that's what the <b>?</b> marks are for), and there's no AI art or game art anywhere on the page.</span>
   <span><b>Made by scavs, for scavs.</b> Part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a>, fan-made tools for The Forever Winter.</span>
   <span><b>Unofficial fan-made tool.</b> Not affiliated with or endorsed by Fun Dog Studios. Like the game? Support the devs: <a href="https://store.steampowered.com/app/2828860/The_Forever_Winter/" target="_blank" rel="noopener">Steam</a> · <a href="https://store.epicgames.com/en-US/p/the-forever-winter-8b8280" target="_blank" rel="noopener">Epic Games Store</a> · <a href="https://www.fundogstudios.com/" target="_blank" rel="noopener">fundogstudios.com</a>. Item data is from <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a> under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</span>
-  <span>Data pulled from <a href="https://theforeverwinter.wiki.gg/wiki/Items" target="_blank" rel="noopener">The Forever Winter Wiki</a> item database on 25 Oct 2026. Prices can still drift after patches, so trust the in-game vendor number.</span>
+  <span>Stash Ledger v0.9. Data pulled from <a href="https://theforeverwinter.wiki.gg/wiki/Items" target="_blank" rel="noopener">The Forever Winter Wiki</a> item database on 25 Oct 2026. Prices can still drift after patches, so trust the in-game vendor number.</span>
 </footer>
 </div>
 
@@ -957,7 +992,7 @@ applySf();
 let showAllNeed=false;
 const gs=document.getElementById("goalsel");
 gs.addEventListener("change",()=>{goal=gs.value;saveGoal();drawProgress();renderMaps()});
-function setGoal(g){goal=g;saveGoal();drawGoalOptions();gs.value=goal;drawProgress();renderMaps();const m=document.getElementById("mapbox");m.open=true;m.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})}
+function setGoal(g){goal=g;saveGoal();drawGoalOptions();gs.value=goal;drawProgress();renderMaps();const m=document.getElementById("mapbox");m.open=true;if(tabMode()){setTab("raid");return}m.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})}
 document.getElementById("goalres").addEventListener("click",e=>{const b=e.target.closest(".run");if(!b)return;const i=+b.dataset.run;selMaps=[i];saveMaps();drawMapChecks();renderMaps();document.getElementById("mapchecks").scrollIntoView({behavior:"smooth",block:"nearest"})});
 document.getElementById("mapres").addEventListener("click",e=>{if(e.target.id==="needall"){showAllNeed=!showAllNeed;renderMaps()}});
 document.getElementById("ups").addEventListener("click",e=>{const t=e.target.closest(".tgt");if(t){e.preventDefault();setGoal(goal===t.dataset.goal?"":t.dataset.goal);return}});
@@ -1024,6 +1059,21 @@ let seen=false;try{seen=localStorage.getItem("tfw-intro")==="1"}catch(e){}
 if(!seen)openIntro();
 q.addEventListener("input",render);
 document.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{filter=c.dataset.f;document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",String(x===c)));render()}));
+// ---- phone tabs ----
+const TABQ=matchMedia("(max-width:880px)");
+const tabMode=()=>TABQ.matches;
+let tab="items";try{tab=localStorage.getItem("tfw-tab")||"items"}catch(e){}
+if(!["items","log","raid","traps"].includes(tab))tab="items";
+function setTab(t,scroll=true){tab=t;document.documentElement.setAttribute("data-tab",t);try{localStorage.setItem("tfw-tab",t)}catch(e){}
+  document.querySelectorAll("#tabbar [role=tab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===t)));
+  if(t==="raid")document.getElementById("mapbox").open=true;
+  if(t==="traps")document.getElementById("trapbox").open=true;
+  if(scroll&&tabMode())document.getElementById("panetop").scrollIntoView({block:"start"})}
+document.getElementById("tabbar").addEventListener("click",e=>{const b=e.target.closest("[role=tab]");if(b)setTab(b.dataset.tab)});
+document.querySelector(".skip").addEventListener("click",()=>{if(tabMode())setTab("items",false)});
+const tdot=()=>{document.getElementById("tdot").hidden=!goal};
+const _rm=renderMaps;renderMaps=function(){_rm();tdot()};
+setTab(tab,false);
 drawProgress();render();
 </script>
 </body>
