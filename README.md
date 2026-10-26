@@ -26,3 +26,8 @@ Unofficial fan-made tool. Not affiliated with or endorsed by Fun Dog Studios. No
 Like the game? Support the devs: [Steam](https://store.steampowered.com/app/2828860/The_Forever_Winter/) · [Epic Games Store](https://store.epicgames.com/en-US/p/the-forever-winter-8b8280) · [Fun Dog Studios](https://www.fundogstudios.com/)
 
 Item, quest, upgrade and spawn data comes from [The Forever Winter Wiki](https://theforeverwinter.wiki.gg/) and is shared under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The data in this page is shared under the same license. Built by NotBlind Media with Claude.
+
+
+## License
+
+The code is licensed under [GPL-3.0](LICENSE): you can copy and change it, but anything you publish from it has to stay open source under GPL-3.0 too. The wiki data is CC BY-SA 4.0 (see Credits). The license only covers this project's own code; The Forever Winter and everything in it belong to Fun Dog Studios.
