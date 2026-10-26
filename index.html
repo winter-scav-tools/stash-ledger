@@ -1,0 +1,1030 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Fan-made keep/sell guide for The Forever Winter: what to sell, what to keep for Innards upgrades and quests, and what to farm on each map.">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>Forever Winter Stash Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* Layout: Innards terminal — CRT header and spoiler banner, terminal-prompt section heads, a two-column workbench (Innards log left, scav manifest right). Dark-only by design: signal red marks what matters, like the game's menu. */
+:root{
+  --bg:#0b0f10; --panel:#121819; --panel2:#1a2223; --line:#2a3436; --rail:#3a4547;
+  --ink:#dfe4e2; --muted:#8b9895; --dim:#7a8784;
+  --red:#ee3b27; --amber:#e7a33e; --frost:#8fb9bd;
+  --f-display:"VT323","Courier New",monospace;
+  --f-body:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  color-scheme:dark;
+}
+/* Colorblind mode: yellow + sky blue stay apart for red-green colorblindness; frost goes neutral so it can't be mixed up with blue */
+:root[data-cb="1"]{--red:#f2c230; --amber:#5ab4f0; --frost:#c7cfcd}
+body{background:var(--bg);color:var(--ink);font:14px/1.55 var(--f-body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+a{color:var(--frost)} a:hover{color:var(--ink)}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding-block:32px 64px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:28px}
+.scan{background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px)}
+.blink{display:inline-block;width:.55em;height:.8em;background:var(--red);vertical-align:-.04em;margin-left:.15em;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.blink{animation:none}}
+
+/* header */
+.hdr{display:flex;flex-direction:column;gap:10px;padding:28px 28px 24px;background-color:var(--panel);border:1px solid var(--line)}
+.hrow{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
+.eyebrow{font:20px/1 var(--f-display);letter-spacing:.08em;color:var(--muted)}
+.fanbadge{font:18px/1 var(--f-display);letter-spacing:.1em;color:var(--ink);border:1px dashed var(--muted);padding:4px 10px}
+h1{margin:0;font:400 clamp(48px,9vw,84px)/.9 var(--f-display);letter-spacing:.02em;text-wrap:balance}
+.hdr p{margin:0;max-width:72ch;color:var(--muted)}
+.hdr .support{color:var(--ink);font-size:13px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;border-top:1px solid var(--line);padding-top:12px;margin-top:4px}
+.hdr .support b{font:20px/1 var(--f-display);letter-spacing:.06em;color:var(--red);font-weight:400}
+.hdr .support a{font-weight:500}
+
+/* section heads as terminal prompts */
+h2{margin:0;font:400 30px/1 var(--f-display);letter-spacing:.04em;text-transform:uppercase;text-wrap:balance}
+h2::before{content:"> ";color:var(--red)}
+h3{margin:0;font:400 20px/1.1 var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sec{display:flex;flex-direction:column;gap:12px}
+.sec>p{margin:0;color:var(--muted);max-width:76ch;font-size:13px}
+
+/* spoiler-free banner */
+.sfbtn{width:100%;display:flex;align-items:center;gap:18px;text-align:left;padding:16px 20px;background:var(--panel);color:var(--ink);border:2px solid var(--red);cursor:pointer;font:inherit}
+.sfbtn:hover{background:var(--panel2)}
+.viewopts{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:-10px}
+.cbbtn{display:inline-flex;white-space:nowrap;flex:none;align-items:center;gap:10px;font:20px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border:1px solid var(--rail);background:var(--panel);color:var(--ink);cursor:pointer}
+.cbbtn:hover{border-color:var(--ink)}
+.cbbtn b{font-weight:400;color:var(--muted)}
+.cbbtn .dot{width:22px;height:10px;background:linear-gradient(90deg,var(--red) 50%,var(--amber) 50%)}
+.cbbtn[aria-pressed="true"]{border-color:var(--red)}
+.cbbtn[aria-pressed="true"] b{color:var(--red)}
+.cbhint{font-size:12px;color:var(--muted)}
+.sfbtn .bang{flex:none;display:grid;place-items:center;width:48px;height:48px;background:var(--red);color:var(--bg);font:44px/1 var(--f-display)}
+.sfbtn .txt{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.sfbtn .txt strong{font:400 34px/1 var(--f-display);letter-spacing:.04em;text-transform:uppercase;color:var(--red)}
+.sfbtn .txt span{font-size:13px;color:var(--muted)}
+.sfbtn .state{flex:none;font:28px/1 var(--f-display);letter-spacing:.1em;color:var(--muted)}
+.sfbtn .sw{display:none}
+.sfbtn[aria-pressed="true"]{background-color:var(--red);color:var(--bg);background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.12) 0 1px,transparent 1px 3px)}
+.sfbtn[aria-pressed="true"] .bang{background:var(--bg);color:var(--red)}
+.sfbtn[aria-pressed="true"] .txt strong,.sfbtn[aria-pressed="true"] .state{color:var(--bg)}
+.sfbtn[aria-pressed="true"] .txt span{color:var(--bg);font-weight:500}
+@media (max-width:560px){.sfbtn{gap:12px;padding:12px 14px}.sfbtn .txt strong{font-size:26px}.sfbtn .bang{width:38px;height:38px;font-size:34px}.sfbtn .state{display:none}}
+.spoil{filter:blur(5px);cursor:pointer;background:var(--line);transition:filter .15s}
+.spoil.shown{filter:none;background:none}
+@media (prefers-reduced-motion:reduce){.spoil{transition:none}}
+
+/* lookalike traps */
+.trap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(290px,100%),1fr));gap:8px}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--amber);padding:10px 12px;font-size:13px;min-width:0}
+.pair .s{color:var(--ink);overflow-wrap:anywhere} .pair .k{color:var(--red);text-align:right;overflow-wrap:anywhere}
+.pair i{font-style:normal;color:var(--muted);font:12px var(--f-body)}
+
+/* workbench */
+.bench{display:grid;grid-template-columns:300px minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:880px){.bench{grid-template-columns:1fr}}
+.progress{background:var(--panel);border:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:16px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);max-height:calc(100vh - 24px);overflow:auto}
+@media (max-width:880px){.progress{position:static;max-height:none}}
+.progress .head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.progress .head h3{font-size:26px;color:var(--ink);letter-spacing:.04em}
+.progress .head h3::before{content:"> ";color:var(--red)}
+.freed{font:500 12px var(--f-body);color:var(--red)}
+.togo{font:12px var(--f-body);color:var(--muted)}
+.grp{display:flex;flex-direction:column;gap:4px}
+.grp label{display:flex;gap:10px;align-items:center;font-size:13px;cursor:pointer;padding:5px 10px;border-left:4px solid var(--rail);text-transform:uppercase;letter-spacing:.02em}
+.grp label:hover{border-left-color:var(--red);background:var(--panel2)}
+.grp label .w{margin-left:auto;font:12px var(--f-body);color:var(--frost);white-space:nowrap;text-transform:none}
+.grp label.on{border-left-color:var(--line)}
+.grp label.on .t{color:var(--dim);text-decoration:line-through}
+.grp label.on .w{color:var(--dim)}
+input[type=checkbox]{accent-color:var(--red)}
+.up{display:flex;flex-direction:column;padding:0}
+.up details.need{padding:0 0 4px 40px}
+.up details.need summary{font:12px var(--f-body);color:var(--muted);cursor:pointer;list-style:none}
+.up details.need summary::-webkit-details-marker{display:none}
+.up details.need summary::after{content:" ▸";color:var(--red)}
+.up details.need[open] summary::after{content:" ▾"}
+.up details.need ul{margin:4px 0 6px;padding-left:16px;font-size:12px;color:var(--muted)}
+.up details.need li b{font:500 12px var(--f-body);color:var(--ink)}
+.qline{display:flex;flex-direction:column}
+.qline label{text-transform:none}
+.qline details{padding:0 0 0 40px}
+.qnote{display:block;padding:0 0 4px 40px;font-size:12px;line-height:1.45;color:var(--frost)}
+.qline details summary{font:12px var(--f-body);color:var(--muted);cursor:pointer}
+.qline details .grp{margin-top:4px}
+#qs label{text-transform:none}
+details#qd{border-top:1px solid var(--line);padding-top:12px}
+details#qd>summary{cursor:pointer;font:400 20px/1.1 var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+details#qd .grp{margin-top:8px}
+.reset{font:18px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;background:none;border:1px solid var(--rail);color:var(--muted);padding:6px 12px;cursor:pointer;align-self:flex-start}
+.reset:hover{border-color:var(--red);color:var(--ink)}
+.reset.arm{border-color:var(--red);background:var(--red);color:var(--bg)}
+.reset.undo{border-color:var(--frost);color:var(--frost)}
+.backup{border-top:1px solid var(--line);padding-top:10px}
+.backup>summary{cursor:pointer;font-size:12px;color:var(--muted)}
+.backup>summary:hover{color:var(--ink)}
+.backup .bk{display:flex;flex-direction:column;gap:8px;padding-top:8px}
+.backup p{margin:0;font-size:12px;color:var(--muted)}
+.backup textarea{width:100%;min-height:70px;resize:vertical;font:11px/1.4 var(--f-body);background:var(--bg);color:var(--ink);border:1px solid var(--rail);padding:8px;word-break:break-all}
+.backup .bkrow{display:flex;flex-wrap:wrap;gap:6px}
+.backup .bkrow .reset{align-self:auto}
+.bkmsg{font-size:12px;color:var(--frost);min-height:1em}
+.bkmsg.bad{color:var(--amber)}
+.howbtn{font:18px/1 var(--f-display);letter-spacing:.1em;color:var(--bg);background:var(--red);border:1px solid var(--red);padding:5px 10px;cursor:pointer}
+.howbtn:hover{background:var(--ink);border-color:var(--ink)}
+.hrow .badges{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+dialog#intro{max-width:560px;width:calc(100% - 32px);max-height:calc(100dvh - 32px);overflow:auto;padding:0;border:2px solid var(--red);background:var(--panel);color:var(--ink)}
+dialog#intro::backdrop{background:rgba(5,8,9,.94);backdrop-filter:blur(6px)}
+.intro{display:flex;flex-direction:column;gap:14px;padding:22px 22px 20px;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px)}
+.intro h2{margin:0;font:400 34px/1 var(--f-display);letter-spacing:.04em;color:var(--red)}
+.intro ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;counter-reset:st}
+.intro li{counter-increment:st;display:grid;grid-template-columns:34px 1fr;gap:10px;font-size:13px;color:var(--muted)}
+.intro li::before{content:counter(st);display:grid;place-items:center;height:30px;border:1px solid var(--rail);font:24px/1 var(--f-display);color:var(--red)}
+.intro li b{display:block;color:var(--ink);font-weight:500}
+.intro .sfask{border:1px solid var(--red);padding:12px;display:flex;flex-direction:column;gap:10px;font-size:13px}
+.intro .row{display:flex;flex-wrap:wrap;gap:8px}
+.intro button{font:22px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;cursor:pointer;border:1px solid var(--rail);background:transparent;color:var(--ink)}
+.intro button.pri{background:var(--red);border-color:var(--red);color:var(--bg)}
+.intro button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:var(--bg)}
+.intro .fine{font-size:11px;color:var(--dim);margin:0}
+.skip{position:absolute;left:8px;top:-60px;z-index:20;background:var(--red);color:var(--bg);padding:8px 12px;font-weight:700}
+.skip:focus{top:8px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* tools */
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+#q{flex:1 1 240px;min-width:0;font:14px var(--f-body);padding:10px 14px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+#q::placeholder{color:var(--dim)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{font:20px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;padding:6px 14px;border:1px solid var(--rail);background:transparent;color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--red)}
+.chip[aria-pressed="true"]{background:var(--red);color:var(--bg);border-color:var(--red)}
+#unsurechip{color:var(--amber);border:1px dashed var(--amber)}
+#unsurechip[aria-pressed="true"]{background:var(--amber);color:var(--bg)}
+#sortsel{font:13px var(--f-body);padding:8px 10px;border:1px solid var(--rail);background:var(--panel);color:var(--ink)}
+.count{font:12px var(--f-body);color:var(--muted);margin-left:auto}
+
+/* tables */
+.table-box{overflow-x:auto;background:var(--panel);border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th{font:400 20px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:12px 14px;border-bottom:1px solid var(--line)}
+td{padding:11px 14px;border-bottom:1px solid #1e2729;vertical-align:top;font-size:13px}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--panel2)}
+td.name{font-weight:700;font-size:14px}
+td.name small{display:block;font:400 12px var(--f-body);color:var(--muted)}
+td.qty,td.val{font-variant-numeric:tabular-nums;white-space:nowrap}
+td.qty{color:var(--red);font-weight:700}
+th.r,td.val{text-align:right}
+td.for{color:var(--muted)}
+td.for s{color:var(--dim)}
+td.for em{font-style:normal;color:var(--frost)}
+td.for .rp{color:var(--frost)}
+.tag{display:inline-block;font:400 20px/1 var(--f-display);letter-spacing:.04em;text-transform:uppercase;padding:4px 10px;white-space:nowrap}
+.t-keep{background:var(--red);color:var(--bg)}
+.t-rep{border:2px solid var(--red);color:var(--red);padding:2px 8px}
+.t-craft{border:1px dashed var(--frost);color:var(--frost);padding:3px 9px}
+.t-free{background:var(--ink);color:var(--bg)}
+.t-sell{border:1px solid var(--muted);color:var(--ink);padding:3px 9px}
+.empty{padding:24px;text-align:center;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12px;color:var(--muted);margin-top:12px}
+.legend span{display:flex;gap:8px;align-items:center}
+.legend .tag{font-size:16px;padding:2px 6px}
+.badge{display:inline-block;font:16px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border:1px solid var(--frost);color:var(--frost);margin-left:8px;vertical-align:2px}
+.badge.q{border-color:var(--amber);color:var(--amber)}
+.unsure{display:inline-grid;place-items:center;width:18px;height:18px;margin-left:8px;background:var(--amber);color:var(--bg);font:700 12px/1 var(--f-body);vertical-align:2px;cursor:help}
+.ureason{display:block;color:var(--amber);font-size:12px;margin-top:2px;font-weight:400}
+.barnote{display:block;color:var(--frost);font-size:12px;margin-top:2px;font-weight:400}
+
+/* loot by map */
+.mapbox{background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--rail)}
+.mapbox[open]{border-left-color:var(--red)}
+.mapbox>summary{list-style:none;display:flex;align-items:center;gap:16px;padding:14px 20px;cursor:pointer;font:400 30px/1 var(--f-display);letter-spacing:.04em}
+.mapbox>summary::-webkit-details-marker{display:none}
+.mapbox>summary>span::before{content:"> ";color:var(--red)}
+.mapbox>summary::after{content:"+";font:30px/1 var(--f-display);color:var(--red)}
+.mapbox[open]>summary::after{content:"−"}
+.mapbox>summary small{font:13px var(--f-body);letter-spacing:0;color:var(--muted);margin-left:auto}
+.mapbody{display:flex;flex-direction:column;gap:14px;padding:0 20px 20px;border-top:1px solid var(--line)}
+.mapbody>p{margin:14px 0 0;color:var(--muted);font-size:13px;max-width:76ch}
+.mapchecks{display:flex;flex-wrap:wrap;gap:8px}
+.mapchecks label{display:flex;align-items:center;gap:8px;font:20px/1 var(--f-display);letter-spacing:.04em;text-transform:uppercase;padding:6px 12px;border:1px solid var(--rail);cursor:pointer}
+.mapchecks label:hover{border-color:var(--red)}
+.mapchecks label.on{background:var(--red);border-color:var(--red);color:var(--bg)}
+.mapchecks input{accent-color:var(--bg)}
+.mapres{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:20px;align-items:start}
+@media (max-width:880px){.mapres{grid-template-columns:1fr}}
+.mapres h3{margin-bottom:8px;color:var(--ink)}
+.mapres table{min-width:0}
+
+.ugrp{border:0;padding:0}
+.ugrp>summary{list-style:none;display:flex;align-items:baseline;gap:8px;cursor:pointer;padding:2px 0 6px;font:400 20px/1.1 var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ugrp>summary::-webkit-details-marker{display:none}
+.ugrp>summary::before{content:"▸";color:var(--red);font-size:16px}
+.ugrp[open]>summary::before{content:"▾"}
+.ugrp>summary:hover{color:var(--ink)}
+.ugrp>summary .cnt{margin-left:auto;font:12px var(--f-body);letter-spacing:0;text-transform:none;color:var(--dim)}
+.ugrp>summary .cnt.full{color:var(--frost)}
+.goalrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.goalrow label{font:400 22px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--red)}
+#goalsel{flex:1 1 260px;min-width:0;max-width:520px;font:14px var(--f-body);padding:9px 12px;border:1px solid var(--rail);background:var(--bg);color:var(--ink)}
+#goalres:empty{display:none}
+.goalbox{display:flex;flex-direction:column;gap:12px;padding:14px;border:1px solid var(--line);border-left:4px solid var(--red);background:var(--bg)}
+.goalsum{font-size:13px;color:var(--muted)}
+.goalsum b{color:var(--ink)}
+.runs{display:flex;flex-wrap:wrap;gap:8px}
+.run{display:flex;align-items:baseline;gap:8px;font:20px/1 var(--f-display);letter-spacing:.04em;text-transform:uppercase;padding:6px 12px;border:1px solid var(--rail);background:transparent;color:var(--ink);cursor:pointer}
+.run:hover{border-color:var(--red)}
+.run.top{background:var(--red);border-color:var(--red);color:var(--bg)}
+.run{white-space:nowrap}
+.run small{font:12px var(--f-body);letter-spacing:0;text-transform:none;opacity:.85}
+@media (max-width:600px){.run{font-size:16px;letter-spacing:.02em;padding:5px 8px;gap:6px;max-width:100%}.goalbox{padding:12px}.goalbox thead{display:none}.goalbox tr{display:grid;grid-template-columns:1fr auto}.goalbox td{border-bottom:0}.goalbox td.maps{grid-column:1/-1;padding-top:0;border-bottom:1px solid var(--line)}}
+@media (max-width:380px){.run{white-space:normal;flex-wrap:wrap;row-gap:2px}.run small{white-space:nowrap}}
+.goalbox table{min-width:0}
+.goalbox td.maps{color:var(--muted);font-size:12px}
+.goalbox td.maps b{color:var(--ink);font-weight:500}
+.maphead{margin-top:6px;color:var(--ink)}
+.badge.goal{border-color:var(--red);color:var(--red)}
+.uprow{display:flex;align-items:center;gap:6px}
+.uprow label{flex:1;min-width:0}
+.tgt{flex:none;font:14px/1 var(--f-display);letter-spacing:.04em;padding:2px 5px;border:1px solid var(--rail);background:transparent;color:var(--muted);cursor:pointer}
+.tgt:hover,.tgt.on{border-color:var(--red);color:var(--red)}
+.chain{border:0;padding:0;margin-top:4px}
+.chain>summary{list-style:none;display:flex;align-items:baseline;gap:8px;cursor:pointer;padding:2px 0 2px;font:400 18px/1.1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.chain>summary::-webkit-details-marker{display:none}
+.chain>summary::before{content:"▸";color:var(--red);font-size:15px}
+.chain[open]>summary::before{content:"▾"}
+.chain>summary .cnt{margin-left:auto;font:12px var(--f-body);letter-spacing:0;text-transform:none;color:var(--dim)}
+.chain>summary .cnt.full{color:var(--frost)}
+.giver{display:block;padding:0 0 4px 20px;font-size:12px;color:var(--frost)}
+.chain .grp{padding-left:12px}
+.qorder{font-size:12px;color:var(--muted)}
+footer{color:var(--muted);font-size:12px;display:flex;flex-direction:column;gap:6px;max-width:80ch;border-top:1px solid var(--line);padding-top:16px}
+footer b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="skip" href="#q">Skip to the item list</a>
+<dialog id="intro" aria-labelledby="intro-h">
+  <div class="intro">
+    <h2 id="intro-h">START HERE</h2>
+    <div class="sfask">
+      <span><b>Haven't finished the story?</b> This page names quests, bosses and secret spots. Turn on spoiler-free mode before you look and they'll be blurred. Tap any blurred name to peek.</span>
+      <div class="row"><button type="button" id="intro-sf" aria-pressed="false">Spoiler-free: off</button><button type="button" id="intro-cb" aria-pressed="false">Colorblind mode: off</button></div>
+    </div>
+    <ol>
+      <li><span><b>Tick what you've done.</b> In the Innards log, tick the upgrades you've built and the story quests you've finished.</span></li>
+      <li><span><b>Read the verdict.</b> Every item says Sell now, Keep, Craft stock or Keep a few. Keep counts drop as you tick things off.</span></li>
+      <li><span><b>Plan a raid.</b> In the Raid planner, pick an upgrade or quest as your goal to see which map has the most of what you need. Or skip the goal and just tick maps to browse.</span></li>
+      <li><span><b>? means unverified.</b> Check those in-game. The reason is under the item name.</span></li>
+    </ol>
+    <div class="row"><button type="button" class="pri" id="intro-go">Got it, open the ledger</button></div>
+    <p class="fine">Reopen this any time with "? How it works" at the top. Fan-made and unofficial.</p>
+  </div>
+</dialog>
+<header class="hdr scan">
+  <div class="hrow"><span class="eyebrow">&gt; THE FOREVER WINTER · INNARDS STASH GUIDE</span><span class="badges"><button class="howbtn" id="howbtn" type="button" aria-haspopup="dialog">? HOW IT WORKS</button><span class="fanbadge">FAN-MADE · UNOFFICIAL</span></span></div>
+  <h1>&gt; STASH LEDGER<span class="blink" aria-hidden="true"></span></h1>
+  <p>One list for the vendor screen. Tick the Innards upgrades you've built and the quests you've finished. Keep counts drop as you go, and items flip to SELL once nothing needs them.</p>
+  <p class="support"><b>SUPPORT THE DEVS</b><span>This is a fan project, not made by Fun Dog Studios. Get the game on</span><a href="https://store.steampowered.com/app/2828860/The_Forever_Winter/" target="_blank" rel="noopener">Steam</a><a href="https://store.epicgames.com/en-US/p/the-forever-winter-8b8280" target="_blank" rel="noopener">Epic Games Store</a><span>·</span><a href="https://www.fundogstudios.com/" target="_blank" rel="noopener">Fun Dog Studios</a></p>
+</header>
+
+<button class="sfbtn" id="sfbtn" type="button" aria-pressed="false"><span class="bang" aria-hidden="true">!</span><span class="txt"><strong id="sftitle">Spoiler-free mode</strong><span id="sfsub">Turn on to blur quest names, bosses and secret spots. Tap any blurred name to peek.</span></span><span class="state" id="sfstate">[ OFF ]</span><span class="sw" aria-hidden="true"></span></button>
+<div class="viewopts"><button class="cbbtn" id="cbbtn" type="button" aria-pressed="false"><span class="dot" aria-hidden="true"></span>Colorblind mode <b id="cbstate">[ OFF ]</b></button><span class="cbhint" id="cbhint">Swaps the red and amber for yellow and blue, which stay easy to tell apart with red-green colorblindness.</span></div>
+
+<details class="mapbox" id="trapbox" open>
+  <summary><span>LOOKALIKE TRAPS</span><small>8 pairs that get sold by accident</small></summary>
+  <div class="mapbody">
+  <p>The left one sells. The right one looks the same in a hurry and is needed.</p>
+  <div class="trap-grid">
+    <div class="pair"><span class="s">Liquid Coolant<br><i>sell</i></span><i>≠</i><span class="k">Liquid Cooling Unit<br><i>Water Bots V1</i></span></div>
+    <div class="pair"><span class="s">Power Drill<br><i>sell</i></span><i>≠</i><span class="k">Hand Drill · Rotary Hammer<br><i>Quarters, story quests</i></span></div>
+    <div class="pair"><span class="s">Battery (plain)<br><i>sell</i></span><i>≠</i><span class="k">Military · Rechargeable · Heavy-Duty<br><i>Turrets, TV, crafting</i></span></div>
+    <div class="pair"><span class="s">Deep Fried Coffee<br><i>sell</i></span><i>≠</i><span class="k">Preserved Cryo Coffee<br><i>Shrine</i></span></div>
+    <div class="pair"><span class="s">Water Thief Mask (large)<br><i>sell</i></span><i>≠</i><span class="k">Masks "Bozo" "Oni" "Thirsty"<br><i>Range v3, Shrine</i></span></div>
+    <div class="pair"><span class="s">Construction Glue · Duct Tape<br><i>sell</i></span><i>≠</i><span class="k">Glue · Super Glue · Masking Tape<br><i>Dog House, quests, Range</i></span></div>
+    <div class="pair"><span class="s">Mystical Tech Totem (small)<br><i>sell</i></span><i>≠</i><span class="k">Mystical Tech Totem (Large)<br><i>repeatable quests</i></span></div>
+    <div class="pair"><span class="s">Hard Drive · High Capacity HD<br><i>sell</i></span><i>≠</i><span class="k">Quantum · Military · Exo Hard Drive<br><i>TV, Cradle, crafting, quests</i></span></div>
+  </div>
+  </div>
+</details>
+
+<details class="mapbox" id="mapbox">
+  <summary><span>RAID PLANNER</span><small id="mapsum">pick a goal or a map</small></summary>
+  <div class="mapbody">
+    <p>Two ways to use it. Pick a <b>goal</b> to see what that upgrade or quest still needs and which map covers the most of it. Or skip the goal and just tick the maps you're running to browse what's worth grabbing there.</p>
+    <div class="goalrow"><label for="goalsel">Goal</label><select id="goalsel"></select></div>
+    <div id="goalres"></div>
+    <h3 class="maphead">Browse by map</h3>
+    <div class="mapchecks" id="mapchecks" role="group" aria-label="Maps"></div>
+    <div class="mapres" id="mapres"></div>
+  </div>
+</details>
+
+<section class="sec" aria-labelledby="bench-h">
+  <h2 id="bench-h">Scav manifest: keep or sell</h2>
+  <p><b>Sell now</b> starts with everything that has no use at all and grows as you tick progress. Items that only feed crafting drop to <b>Craft stock</b> so you keep a few. Repeatable quest items stay as <b>Keep a few</b> because those quests come back.</p>
+  <div class="bench">
+    <aside class="progress" aria-label="Innards progress">
+      <div class="head"><h3>Innards log</h3><span class="freed" id="freed"></span></div>
+      <span class="togo" id="togo"></span>
+      <div id="ups" style="display:flex;flex-direction:column;gap:14px"></div>
+      <details id="qd"><summary>Story quests done</summary><div class="grp" id="qs"></div></details>
+      <button class="reset" id="reset" type="button">Clear all ticks</button>
+      <details class="backup" id="backup"><summary>Back up or move progress</summary><div class="bk">
+        <p>Copy this code to keep a backup or to carry your ticks to another device or browser. On the other device, paste it here and press Load.</p>
+        <textarea id="bkcode" aria-label="Progress code" spellcheck="false" autocomplete="off"></textarea>
+        <div class="bkrow"><button class="reset" id="bkcopy" type="button">Copy my code</button><button class="reset" id="bkload" type="button">Load pasted code</button></div>
+        <span class="bkmsg" id="bkmsg" role="status" aria-live="polite"></span>
+      </div></details>
+    </aside>
+    <div style="min-width:0">
+      <div class="tools">
+        <input id="q" type="search" placeholder="> search an item, upgrade or quest_" aria-label="Search items">
+        <div class="chips" role="group" aria-label="Filter">
+          <button class="chip" data-f="all" aria-pressed="true">All</button>
+          <button class="chip" data-f="sell" aria-pressed="false">Sell now</button>
+          <button class="chip" data-f="keep" aria-pressed="false">Keep</button>
+          <button class="chip" data-f="craft" aria-pressed="false">Crafting</button>
+          <button class="chip" data-f="unsure" aria-pressed="false" id="unsurechip">? Unverified</button>
+          <select id="sortsel" aria-label="Sort sell items"><option value="price">Sell lists by price</option><option value="space">Sell lists by value per space</option></select>
+        </div>
+        <span class="count" id="count" role="status" aria-live="polite"></span>
+      </div>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Item</th><th>Verdict</th><th>Keep</th><th class="r">Sells</th><th class="r" title="Credits per unit of rig space">Per space</th><th>Still needed for · repeats · crafts</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="empty" id="empty" hidden>Nothing matches. Weapons, ammo and your own gear aren't listed here.</div>
+      </div>
+      <div class="legend" style="margin-top:10px">
+        <span><span class="tag t-keep">Keep</span> an unbuilt upgrade or open quest needs it</span>
+        <span><span class="tag t-rep">Keep a few</span> repeatable quests</span>
+        <span><span class="tag t-craft">Craft stock</span> only recipes left</span>
+        <span><span class="tag t-free">Sell now</span> freed by your progress</span>
+        <span><span class="tag t-sell">Always sell</span> no use at all</span>
+        <span><span class="unsure" style="margin:0">?</span> unverified: check it in-game</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Keep counts are exact per upgrade and quest, so they drop as you tick. Crossed-out entries are uses you've finished. Ticks are saved in this browser only, so you and your friend each track your own. To move them to another device, use "Back up or move progress" in the Innards log.</span>
+  <span>Rows marked <b>?</b> are unverified. The reason is under the item name, and the "? Unverified" filter lists them all. If you check one in-game and it's wrong, open an issue. <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Found a mistake? Open an issue</a></span>
+  <span>Per space is credits per unit of rig space, for deciding what to drop when your rig is full. Large-bin items have their own slot, so they aren't compared.</span>
+  <span>Not listed: weapons, ammo, gun attachments (sell any you don't run), and your own kit like med kits, grenades, turrets and rig lights.</span>
+  <span><b>Made by scavs, for scavs.</b> Part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a>, fan-made tools for The Forever Winter.</span>
+  <span><b>Unofficial fan-made tool.</b> Not affiliated with or endorsed by Fun Dog Studios. Like the game? Support the devs: <a href="https://store.steampowered.com/app/2828860/The_Forever_Winter/" target="_blank" rel="noopener">Steam</a> · <a href="https://store.epicgames.com/en-US/p/the-forever-winter-8b8280" target="_blank" rel="noopener">Epic Games Store</a> · <a href="https://www.fundogstudios.com/" target="_blank" rel="noopener">fundogstudios.com</a>. Item data is from <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a> under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</span>
+  <span>Data pulled from <a href="https://theforeverwinter.wiki.gg/wiki/Items" target="_blank" rel="noopener">The Forever Winter Wiki</a> item database on 25 Oct 2026. Prices can still drift after patches, so trust the in-game vendor number.</span>
+</footer>
+</div>
+
+<script>
+const GROUPS=[
+ ["Water",["+16 days","+28 days","Water Bots V1","Water Bots V2","Water Bots V3"]],
+ ["Defense",["Turrets V1","Turrets V2","Turrets V3"]],
+ ["Workbenches",["Workshop","Munitions Printer","Manufacture Booster","Repair Bench"]],
+ ["Bar",["The Bar","Bar V1","Bar V2","Bar V3","Transmission Tower"]],
+ ["Personal Quarters",["Personal Quarters","Quarters v1","Quarters v2","Quarters v3"]],
+ ["Shooting Range",["Shooting Range","Range v1","Range v2","Range v3"]],
+ ["Cognition Cradle",["Cognition Cradle","Cradle Frame","Cradle Chamber"]],
+ ["Other",["Dog House","Garage","TV Small","TV Mega","Music System","Special Tree","Shrine"]]
+];
+const WATER={"+16 days":10,"+28 days":20,"Water Bots V1":25,"Water Bots V2":50,"Water Bots V3":75,"Turrets V1":25,"Turrets V2":50,"Turrets V3":75,"Workshop":8,"Munitions Printer":12,"Manufacture Booster":50,"Repair Bench":16,"The Bar":32,"Bar V1":44,"Bar V2":56,"Bar V3":68,"Transmission Tower":80,"Personal Quarters":12,"Quarters v1":26,"Quarters v2":52,"Quarters v3":72,"Shooting Range":6,"Range v1":12,"Range v2":24,"Range v3":48,"Cognition Cradle":50,"Cradle Frame":60,"Cradle Chamber":70,"Dog House":1,"Garage":32,"TV Small":5,"TV Mega":8,"Music System":1,"Special Tree":1,"Shrine":5};
+
+// [name, sell value (0 = not sellable/loot), builds {upgrade:amount}, crafts [], quests [[quest, amount, repeatable 0/1]], note]
+const R=(n,v,b={},c=[],q=[],note="")=>({n,v,b,c,q,note});
+const AMMO="ammo";
+const ITEMS=[
+R("\"Beef\" Flavor Packet",256,{},["Small First Aid Kit"]),
+R("Absinthe",2819,{},[],[],"dog food"),
+R("Advanced Joint",7687,{},["Exo Stamina Equipment"],[["Oiled Joints",8,0]]),
+R("Advanced Navigation Device",45612,{},["Item Extraction Beacon"]),
+R("Advanced Pliers",4869),
+R("Analog Headset",3331,{},[],[],"shelf decoration"),
+R("Anti-Vertex Bolt Cutters",23575),
+R("Armorer's Wrench",11787,{},["AT-43 MASS"]),
+R("Assorted Medicine",4612,{},["Heavy-Duty Trauma Kit","Standard First Aid Kit"],[["Doctor Morrow Pt. 2",10,0]]),
+R("AT-43 Breech Assembly",7175,{},["AT-43 MASS"]),
+R("AT-43 Feed Mechanism",3844,{},["AT-43 MASS"]),
+R("AT-43 Muzzle Break",3075,{},["AT-43 MASS"]),
+R("AT-43 Spring System",2819,{},["AT-43 MASS"]),
+R("AT-43 Trigger Assembly",4612,{},["AT-43 MASS"]),
+R("Ball Bearings",769,{"Turrets V1":8},["12-Gauge Buckshot"]),
+R("Bandages",2050,{},["Heavy-Duty Trauma Kit","Standard First Aid Kit"]),
+R("Banner of the Red Baron",16400,{},[],[["Red Baron's Legacy",1,1]]),
+R("Bar Supplies",1537,{},[],[["Fetch Bar Supplies",1,0]]),
+R("Basic Pliers",1794,{"Manufacture Booster":1,"Munitions Printer":1},["Gunpowder"]),
+R("Battery",769,{},[],[],"lookalike"),
+R("Battery Charger",9737,{"TV Small":1},["Power Cell"]),
+R("Battle Plans",3075,{},[],[["Discover the Truth",1,1]]),
+R("Beer",3075,{},[],[],"dog food"),
+R("Blood Packs",11275,{},["Advanced First Aid Kit","Water Canteen"]),
+R("Boinco Candy Bar",2562,{},["MRE"]),
+R("Bolt Cutters",6662),
+R("Bolts",717,{"Shooting Range":12,"+16 days":15},["Electric Motor"],[["Build Mother Courage's Body Rack",40,0]]),
+R("Brandy",9737,{},[],[],"dog food"),
+R("Brawler Insignia",2562,{},[],[["Insignia Retrieval",3,1]]),
+R("Brawler Spinal Joint",6150,{"Water Bots V2":6},[],[["Backbones for the Backbone",10,0]]),
+R("Bug Spray",1537),
+R("Bulkhead Lights",18962,{"Bar V3":5,"Quarters v3":5}),
+R("Camera",1537),
+R("Camera Lens",9225,{"Turrets V2":5},["20mm Turret","Recovery Drone"]),
+R("Car Battery",3075,{},["Rig Light"]),
+R("Carbon Fiber",8200,{"+28 days":8}),
+R("Carbon Fiber Tube",10762,{"Cradle Frame":6},[],[["A Cost Will Be Paid Pt. 3",1,0]]),
+R("Clamp",1025,{"Repair Bench":1},[],[["A Cost Will Be Paid Pt. 3",1,0],["Build Mother Courage's Body Rack",10,0]]),
+R("Cleaner",1537,{"Personal Quarters":8}),
+R("Clear Tube",3997,{"Bar V1":6}),
+R("Combat Stimulant",0,{},[],[["Science of Stimulants",3,1]]),
+R("Comms Device",2562,{},[],[["Lost Signals",5,1]]),
+R("Computer Fan",1435,{},["Advanced Navigation Device"]),
+R("Concrete Mixer",11275,{"Range v2":1,"Bar V2":2}),
+R("Concrete Powder",8712,{"Cognition Cradle":3,"Range v2":3,"Bar V2":6}),
+R("Construction Drone",0,{"Bar V2":1,"Quarters v2":1,"Range v2":1,"+28 days":3,"Bar V3":3,"Cognition Cradle":3,"Garage":3,"Range v3":3,"Transmission Tower":3,"Cradle Frame":4,"Cradle Chamber":5},[],[],"crafted at the Workshop"),
+R("Construction Foam",38950,{"Cognition Cradle":3,"Range v3":3,"Transmission Tower":5}),
+R("Construction Glue",11275,{},[],[],"lookalike"),
+R("Convoy Schedule",3075,{},[],[["Scav Scrap Pt. 1",1,1]]),
+R("Cordura",7175),
+R("Corpse Tank Control Panel",6150,{},[],[["Terror on Display",1,1]]),
+R("CPU",4356,{},["Construction Drone"]),
+R("Crowbar",6662),
+R("Crucible",9225,{},["AT-43 MASS"]),
+R("Cybernetic Lungs",7175,{},[],[["Breath of Fresh Smoke",3,0]]),
+R("Cyborg Immunosuppressant",14350,{},[],[["Transmission Tower Pt. 4",10,0]]),
+R("Cyborg's Head",2050,{},["Tactical Camera"],[["Harvest Tech",5,1]]),
+R("Data Cache",4100,{},[],[["Lost Cache",1,1]]),
+R("Deep Fried Coffee",7175,{},[],[],"lookalike"),
+R("Diagnostic Scanner",34850,{"Quarters v3":1},[],[["Doctor Morrow Pt. 1",20,0]]),
+R("Diodegradable Multi-tool",1435,{},[".50 PST Ammo"],[["Garage Days Pt. 1",1,0]]),
+R("Dog Tags",3075,{},[],[["Bond of Brothers",1,1]]),
+R("Dogboro Cigarettes",1025,{},["5.45x39mm Cryo Ammo"],[["Tobacco Journey Pt. 1",3,0],["Tobacco Journey Pt. 4",8,0],["Tobacco Journey Pt. 7",15,0],["Tobacco Journey Pt. 10",20,0],["Doctor Morrow Pt. 4",10,0],["Tobacco Journey Random Pt. 1",9,1],["A Light in the Dark",1,1]]),
+R("Dossier",2050),
+R("Drywall",3075,{"Quarters v1":8,"Range v1":8}),
+R("Duct Tape",6662,{},[],[],"lookalike"),
+R("E-Nuggets",2562),
+R("EDC Multi-tool",19987,{},[],[["Garage Days Pt. 1",1,0]]),
+R("Electric Motor",7175,{"Turrets V2":3},["20mm Turret","Construction Drone","Recovery Drone","Fast Travel Drone"],[["A Cost Will Be Paid Pt. 3",1,0]]),
+R("Encrypted Data Pad",31775),
+R("Energy Bar",3331,{},["Adrenaline Stim"]),
+R("EOD Armor Plate",4869,{"Water Bots V3":6},[],[["Armor Harvest",3,1]]),
+R("EOD Suit Component",6662,{},[],[["Hunt the Hunters",2,1]]),
+R("ES Lamp",3844,{"Special Tree":5,"Range v1":8}),
+R("Ethyl Alcohol",2050,{},[],[],"dog food"),
+R("Eurasian Brawler Components",4100,{},[],[["Cybernetic Heist",3,1]]),
+R("Eurasian Drone Cortex",5637,{"Water Bots V1":5},[],[["Aerial Scavenge",3,1]]),
+R("Eurasian HK's Mnemonic Index",0,{},[],[["Collect HK Components",6,0]]),
+R("Eurasian IFF Chip LVL1",1025,{"Repair Bench":3},["WLT MPL","Eurasian IFF Chip LVL2"]),
+R("Eurasian IFF Chip LVL2",3075,{},["GM6","PM-9","NTW-20","Eurasian IFF Chip LVL3"]),
+R("Eurasian IFF Chip LVL3",8200,{},["USAS-12","VEPR-12","Painless","XM25"]),
+R("Eurasian Sand-Diver HK Cortical Array",0,{},[],[["Collect Sand-Diver HK Components",4,0]]),
+R("Eurasian Sand-Diver HK Interface Core",0,{},[],[["Collect Sand-Diver HK Components",3,0]]),
+R("Eurasian Sand-Diver HK Memory Interface",0,{},[],[["Collect Sand-Diver HK Components",2,0]]),
+R("Eurasian Supply Crate",8200,{},[],[["Summon the Pain Pt. 2",1,1]],"large slot · quest also pays water"),
+R("Europa MilTech Radio",8329),
+R("Europan Drone Flight Controller",4100,{"Water Bots V1":5},[],[["Steel on High",3,0],["Treasure in the Sky",3,1]]),
+R("Europan IFF Chip LVL1",1025,{"Repair Bench":3},["M4A1","M16","G36","SA58","S12","C96","G-L 19","R8","R11 RSASS","87 Target","Europan IFF Chip LVL2"],[["Go Home, Conscript",5,0]]),
+R("Europan IFF Chip LVL2",3075,{},["SCAR","M60","MG34","P90","APC9 Pro","Kriss Vector 45","Spectre M4","USP","SOG","Viper","36M AntiTank","Europan IFF Chip LVL3"]),
+R("Europan IFF Chip LVL3",8200,{},["AA12","SAW","Grenade Launcher","M79 Sawed-off"]),
+R("Euruskan IFF Chip LVL1",1025,{"Repair Bench":3},["AK","PP-19 Vityaz","PPSH-41","TKB-0146","VKS Vykhlop","Euruskan IFF Chip LVL2"]),
+R("Euruskan IFF Chip LVL2",3075,{},["RPK","SVD","Euruskan IFF Chip LVL3"]),
+R("Euruskan IFF Chip LVL3",8200,{},["RPD"]),
+R("Euruskan Plans",3075,{},[],[["Unravel Euruskan Mysteries",3,1]]),
+R("Exo Component",9225,{},["Exo Stamina Equipment"],[["Armored Treasure",3,1]]),
+R("Exo Hard Drive",11275,{},[],[["Cracked Open",2,1]]),
+R("Exo Repair Kit",24600),
+R("Explosive Charge",0,{},[],[["Achilles' Heel",5,0]]),
+R("Explosives",8329,{"Personal Quarters":8},["IED","Gunpowder","Frag Grenade","20x105mm Anti-Tank"],[["Risky Cargo",2,1]],"large slot"),
+R("Family Photo",3075,{},[],[],"quest item with no listed quest"),
+R("Fertilizer",410,{},["12-Gauge Buckshot","9x19mm Ammo"]),
+R("Field Repair Kit",6662,{"Repair Bench":1}),
+R("Fire Starter Kit",1537),
+R("Fleece",2050,{"Quarters v1":6}),
+R("Food Tin",1025,{"Dog House":1,"The Bar":10},["MRE","Fertilizer"]),
+R("Frequency Tap",12300,{},["Signal Scrambler Grenade"],[["Transmission Tower Pt. 1",9,0]]),
+R("Fuse",1537,{"Manufacture Booster":6,"Munitions Printer":6},["Frag Grenade","Decoy Grenade","Signal Scrambler Grenade"]),
+R("Gin",11787,{},[],[],"dog food"),
+R("Glue",1537,{"Dog House":3}),
+R("Glue Gun",3844),
+R("God Sniper Equipment",4100,{},[],[["Sniper Sweep",1,1]]),
+R("Goodies",2050,{"Bar V1":8}),
+R("GP-5 Gas Mask",3075),
+R("Grindstone",7175,{},["AT-43 MASS"],[],"AT-43 needs 5"),
+R("Gunpowder",5637,{"Turrets V1":3,"Manufacture Booster":6,"Munitions Printer":6},[AMMO]),
+R("Gyroscopic Stabilizer",16400,{"Turrets V3":2},[],[["Target Awareness",1,0]]),
+R("Hammer",1025),
+R("Hand Drill",2460,{"Personal Quarters":3}),
+R("Happy Cookies",4100,{},[],[],"dog food"),
+R("Hard Drive",2306,{},[],[],"lookalike"),
+R("Hard Shell Laptop",32800,{"Garage":1}),
+R("Heavy Joint Assembly",3844,{},["Turret Base","Pneumatic Jump"],[["Electro-Magnetic Railway Pt. 7",4,1]]),
+R("Heavy-Duty Battery",8200,{"Turrets V2":3},["Exo Stamina Equipment"]),
+R("Heavy-Duty Trauma Kit",18450,{"Quarters v2":2}),
+R("Heirloom Seeds",17425,{"Shrine":1}),
+R("High Capacity Hard Drive",27675,{},[],[],"lookalike"),
+R("High Durability Rail Component",7471,{},["Rail Gun Turret Weapon"],[["Electro-Magnetic Railway Pt. 1",1,1]]),
+R("High-Frequency Radio",6150),
+R("HIND Navigation Computer",16912,{},[],[["Hind Nav Comp",1,1]]),
+R("Hinoko Cigarettes",6662,{},[],[["Tobacco Journey Pt. 2",2,0],["Tobacco Journey Pt. 5",5,0],["Tobacco Journey Pt. 8",8,0],["Doctor Morrow Pt. 4",10,0],["Tobacco Journey Random Pt. 2",6,1]]),
+R("Hose",2152),
+R("Industrial Black Light",15887),
+R("Industrial Chemicals",4100),
+R("Industrial Sealant",13325,{"+28 days":3,"Range v2":5},[],[["A Cost Will Be Paid Pt. 3",1,0]]),
+R("Intelligence Cassette",3075,{"Music System":3}),
+R("Intelligence Disk",4869,{},["Military Codebreaker"]),
+R("Intermediate Tool Set",10762,{"+16 days":1,"Manufacture Booster":1,"Munitions Printer":1,"Quarters v1":1}),
+R("Jammer",8329,{},[],[["Clear Skies",1,1]],"large slot · spawns with its quest"),
+R("Jerrycan",8329,{},[],[],"large slot"),
+R("Jumper Cable Kit",1537),
+R("Large Lockbox",8200,{},[],[],"large slot · can't be opened"),
+R("Laser Rangefinder",16400,{},["Tactical Camera"],[["In the Crosshairs",3,1]]),
+R("LCD",5637,{"TV Small":3},["Fast Travel Drone"]),
+R("Leather Hole Punch",3075,{"Manufacture Booster":1,"Munitions Printer":1}),
+R("Light Bulb",2562,{"Special Tree":5,"Quarters v1":12},["Rig Light"]),
+R("Lighter",1794),
+R("Liquid Coolant",7175,{},[],[],"lookalike"),
+R("Liquid Cooling Unit",12300,{"Water Bots V1":3}),
+R("Logbook",1537,{},[],[["Burying Secrets",1,1]]),
+R("Machine Parts",2306,{"Water Bots V1":3},["Electric Motor","Power Cell"]),
+R("Manpack Radio",7431),
+R("Masking Tape",3331,{"Shooting Range":6}),
+R("Matches",512),
+R("Mead",4612,{},[],[],"dog food"),
+R("Measuring Tape",2050,{"Dog House":1}),
+R("Mech Part",8329,{},[],[["Mechanical Momentum",1,1]],"large slot"),
+R("Medical Alcohol",5637,{},["Heavy-Duty Trauma Kit"],[["Doctor Morrow Pt. 3",30,0]]),
+R("Medical Supplies",512,{},[],[["Scav's Prescription",1,1]]),
+R("Medical Tools",5637,{"Quarters v1":5},["Heavy-Duty Trauma Kit","Advanced First Aid Kit"]),
+R("Memento",512,{},[],[["Sharp Memory",1,1]]),
+R("Merkava Suspension Component",16400,{},[],[["Harvest Upgraded Mechanicals",3,1]]),
+R("Metal Fragments",1025,{"Workshop":6,"The Bar":15},[AMMO]),
+R("Metal Pipe",1794,{"Shooting Range":8,"+16 days":12,"The Bar":12},["Signal Scrambler Grenade"]),
+R("Metal Slats",1025,{"Special Tree":10}),
+R("Mezcal",7175,{},[],[],"dog food"),
+R("Military Battery",12300,{"Turrets V3":5},["Recovery Drone"]),
+R("Military Cables",6662,{},["Exo Stamina Equipment","Tactical Camera"],[["A Cost Will Be Paid Pt. 3",1,0]]),
+R("Military Circuitry",11275,{"Turrets V3":6},["Pneumatic Jump","Special Units DetPack"]),
+R("Military Codebreaker",57400,{"Cradle Chamber":3,"Transmission Tower":3},[],[],"also craftable"),
+R("Military Grade Lubricant",6150,{"Turrets V2":2},["AT-43 MASS"]),
+R("Military Hard Drive",8200,{},["Military Codebreaker"]),
+R("Military PDA",5637,{},["Military Codebreaker","Processor Board"]),
+R("Military Power Cell",16400,{"Cradle Frame":4},["Construction Drone","Organoid Networking Board","Item Extraction Beacon"]),
+R("Military Tape",8200,{},["Military Cables","Cluster Grenade"]),
+R("Mini MD Drive",3075,{"Music System":1}),
+R("Modem",3331,{},["CPU","Advanced Navigation Device"]),
+R("Motherboard",5637,{"Turrets V1":2},["Military Codebreaker","Organoid Networking Board"]),
+R("Mother Courage Codex",0,{"+28 days":1},[],[],"boss drop"),
+R("MRE",4100,{"Bar V2":6},[],[],"top dog food"),
+R("Multi-frequency Broadcaster",13325,{"Transmission Tower":3,"Water Bots V3":3}),
+R("Music Cassette",4612,{},[],[],"shelf decoration"),
+R("Mystical Tech Totem",32800,{},[],[],"lookalike · shelf decoration"),
+R("Mystical Tech Totem (Large)",32800,{},[],[["Icon at Stake",1,1],["The People's Icon",1,1]],"large slot"),
+R("Nails",307,{"Range v1":10},[AMMO]),
+R("Neuralink Disc Player",11275,{"Music System":1},["Decoy Grenade"]),
+R("Neuro Uplink Board",6662,{},["Organoid Networking Board"],[["Defeat the Uplinks",3,1]]),
+R("Nucky Gold Cigarettes",9225,{},[],[["Tobacco Journey Pt. 3",1,0],["Tobacco Journey Pt. 6",3,0],["Tobacco Journey Pt. 9",5,0],["Doctor Morrow Pt. 4",10,0],["Tobacco Journey Random Pt. 3",3,1]]),
+R("Nuts",410,{"Shooting Range":12},["Electric Motor"],[["Build Mother Courage's Body Rack",40,0]]),
+R("Occulomide Auto-Surgeon",91225,{},[],[],"jackpot"),
+R("Octogirl's Tool Set",4251,{},[],[["Transmission Tower Pt. 3",1,0]]),
+R("Old Paint Can",4100,{},["Frag Grenade","Decoy Grenade","Signal Scrambler Grenade"]),
+R("Old Tool Set",5637,{"Workshop":1},[],[["Garage Days Pt. 1",1,0]]),
+R("OLED",11787,{"Quarters v2":5,"TV Mega":5}),
+R("Orga Codex",0,{"Water Bots V3":1},[],[["A Cost Will Be Paid Pt. 1",2,0]],"boss drop"),
+R("Orgamech Nervous System",8200,{},[],[["Giant's Senses",1,0]]),
+R("Organoid Memory Board",21525,{"Water Bots V2":1},["Organoid Networking Board","Advanced Navigation Device"]),
+R("Organoid Networking Board",75850,{"Water Bots V3":1,"Transmission Tower":2}),
+R("Organoid Outlet",13837,{"Water Bots V2":1,"Cradle Frame":5},["Sentient Drill"]),
+R("Organoid Plug",9225,{"Water Bots V2":1,"Cradle Frame":5},["Sentient Drill"]),
+R("Personnel Data",3075,{},[],[["VIP Treatment Pt. 1",1,1]]),
+R("Picture",512,{},[],[["Memento Pt. 1",1,1]]),
+R("Pipe Wrench",5637),
+R("Portable Generator",16400,{"Garage":2}),
+R("Potato Chips",769,{},[],[],"dog food"),
+R("Power Cell",10762,{},["20mm Turret","Fast Travel Drone","Pneumatic Jump"],[["Achilles' Heel",2,0]]),
+R("Power Drill",7175,{},[],[],"lookalike"),
+R("Power Schematics",3075,{},[],[["A Cost Will Be Paid Pt. 2",1,0]]),
+R("Power Supply Unit",4100),
+R("Precision Components",3075,{},[],[["Memento Pt. 3",1,1]]),
+R("Precision Tool Set",11275,{"Garage":1,"Water Bots V3":1},["Construction Drone"]),
+R("Preserved Cryo Coffee",19475,{"Shrine":1}),
+R("Pressure Gauge",3075,{"+16 days":2}),
+R("Pretzels",1794,{},["MRE"]),
+R("Printed Circuit Board",4612,{"TV Small":3},["IED"]),
+R("Printing Resin",2562,{"Workshop":6,"Bar V1":8},[],[["A Cost Will Be Paid Pt. 3",1,0]]),
+R("Prized Alcohol",7175,{},[],[["Thief in the Night",3,1]]),
+R("Processor Board",3075,{"Water Bots V2":5},[],[["Transmission Tower Pt. 4",1,0]]),
+R("Quantum Hard Drive",45612,{"TV Mega":1,"Cradle Chamber":5}),
+R("Railgun Assembly Component",10836,{},["Rail Gun Turret Ammo Supply"],[["Electro-Magnetic Railway Pt. 6",1,1]]),
+R("Railgun Body Component",13069,{},["Rail Gun Turret Weapon"],[["Electro-Magnetic Railway Pt. 8",1,1]]),
+R("Railgun Breech Component",14766,{},["Rail Gun Turret Weapon"],[["Electro-Magnetic Railway Pt. 2",1,0],["Electro-Magnetic Railway Pt. 3",1,1]]),
+R("Railgun Cooling Component",15950,{},["Rail Gun Turret Ammo Supply"],[["Electro-Magnetic Railway Pt. 5",1,1]]),
+R("Railgun Magazine",2693,{},["Rail Gun Turret Weapon"],[["Electro-Magnetic Railway Pt. 9",1,1]]),
+R("Railgun Power Bank",4670,{},["Rail Gun Turret Ammo Supply"]),
+R("Rare Metals",6150,{},[AMMO]),
+R("Rat King Codex",0,{"Bar V3":1},[],[],"boss drop"),
+R("Rat King's Wake",0,{"Shrine":1},[],[["King of Kings",25,1]],"boss drop"),
+R("Ratchet",3844,{"Garage":1}),
+R("Rechargeable Battery",1537,{"TV Small":6},["Power Cell"]),
+R("Recovery Drone",0,{},[],[["Achilles' Heel",1,0]],"crafted at the Workshop"),
+R("Relay",1794,{"TV Mega":10},["Electric Motor"]),
+R("Repair Dronelet",13325,{},["Recovery Drone"]),
+R("Ribbed Tube",1179,{"The Bar":8}),
+R("Rootkit Device",34850,{"Cradle Chamber":3}),
+R("Rotary Hammer",13325,{"Quarters v2":2},[],[["Garage Days Pt. 1",1,0],["A Cost Will Be Paid Pt. 1",5,0]]),
+R("Rum",7175,{"Bar V1":8},[],[],"dog food"),
+R("Scavenger's Go-Bag",6662),
+R("Scavenger's Tool Kit",3331,{"Personal Quarters":1,"Workshop":1}),
+R("Scotch",24600,{},[],[],"dog food"),
+R("Screwdriver",1435,{"Water Bots V1":1},["CPU","Processor Board"]),
+R("Screws",922,{},[],[["Build Mother Courage's Body Rack",40,0]]),
+Object.assign(R("Sealed Mystery Box",2034,{},[],[],"large slot · opening it usually beats the sell price"),{open:true}),
+R("Sentient Drill",84050,{"Bar V3":2,"Cognition Cradle":3}),
+R("Sewers Technical Plans",512,{},[],[["Shifting Tide Pt. 3",1,1]]),
+R("Sewing Kit",4612,{"Workshop":1}),
+R("Sheet Metal",1537,{"Range v1":8,"Bar V1":12,"Dog House":12},["Fast Travel Drone"],[["Build Mother Courage's Body Rack",20,0]]),
+R("Shield Officer Codex",0,{"Range v3":1},[],[],"boss drop"),
+R("Sledgehammer",10762,{"+28 days":1}),
+R("Smuggled Organs",27675,{"Shrine":1},["Food Tin ×8"],[],"best dog food"),
+R("Soap",17425),
+R("Solar Battery",24600,{"TV Mega":1}),
+R("Spare Part",9310,{},[],[["Food Chain Interrupted",1,1]],"large slot"),
+R("Spark Plug",3075),
+R("Stereo Box",13325,{},[],[],"shelf decoration"),
+R("Stethoscope",4612),
+R("Super Glue",6662,{},[],[["Achilles' Heel",3,0]]),
+R("Survival Lighter",3075),
+R("Survival Seeds",6662),
+R("Syringe",2562,{},["Small First Aid Kit","Adrenaline Stim"]),
+R("T-90 Suspension Component",13837,{},[],[["Kursk's Children",3,1]]),
+R("Targeting Computer",13325,{},[],[["AA Tech Extraction",1,1]],"quest pays a USAS-12 (~38k)"),
+R("Teddy Bear",512,{},[],[["Errand of Mercy",1,1]]),
+R("Telemetry Unit",8712,{"Turrets V3":3},["Military Codebreaker"]),
+R("Tequila",9225,{"Bar V2":6},[],[],"dog food"),
+R("Thermal Matches",5637),
+R("Thermite",11787,{},["40mm Grenade",".50 PST Ammo","Special Units DetPack"]),
+R("Thermometer",6662),
+R("Tissue Sample",512,{},[],[["Sick Harvest",5,1]]),
+R("Toilet Paper",28700,{"Quarters v3":3}),
+R("Toothpaste",12300),
+R("Toothy Codex",0,{"Quarters v3":1},[],[],"boss drop"),
+R("Tourniquet",4100,{},["Heavy-Duty Trauma Kit"]),
+R("Toy Car",1537,{},[],[["Toyetic Action",1,0]]),
+R("Toy Dinosaur",3587,{},[],[["Toyetic Action",1,0]]),
+R("Toy Train",2562,{},[],[["Toyetic Action",1,0]]),
+R("Turret Component",2050,{"Turrets V1":10},["20mm Turret"],[["Immobile Death",3,1]]),
+R("U-STIK+ USB Drive",1025),
+R("UMEGA Media Player",16400,{"Music System":1,"TV Mega":3}),
+R("Urea",3075,{},["Fertilizer"]),
+R("UV Light Bulb",6150,{"Special Tree":5,"Range v2":6,"Quarters v2":8}),
+R("Valve Adjustment Tool",3587,{"+16 days":1}),
+R("Ventilation Filter",12300),
+R("Ventilation Regulator",34850,{"Cognition Cradle":2}),
+R("Vodka",4100,{"The Bar":10},[],[],"dog food"),
+R("Water Map",4100,{},[],[["Hidden Water Pt. 1",1,1]]),
+R("Water Thief Mask (large)",8329,{},[],[],"lookalike · large slot"),
+R("Water Thief's Mask \"Bozo\"",9737,{"Range v3":1}),
+R("Water Thief's Mask \"Oni\"",12300,{"Shrine":1}),
+R("Water Thief's Mask \"Thirsty\"",7175,{"Range v3":1}),
+R("WD40",4100,{"Range v1":2,"Turrets V2":5}),
+R("Weapon Parts",2306,{"Turrets V1":5,"Special Tree":5},["AT-43 MASS"]),
+R("Weapon Schematics",3075,{},[],[["Manufactured Heist",3,1]]),
+R("Weapon Tech",2562,{},[],[["Memento Pt. 2",1,1]]),
+R("Wetware Processor",45612,{"Turrets V3":2,"Transmission Tower":2,"Cradle Chamber":4},["Sentient Drill"]),
+R("Wetware System",512,{},[],[["Nervous Upgrade",1,0]]),
+R("Whiskey",16400,{},["5.45x39mm Cryo Ammo"],[],"dog food"),
+R("Wine",8200,{},[],[],"dog food"),
+R("Wires",871,{"TV Small":5,"Music System":8},["IED","Military Cables","Rig Light"]),
+R("Wooden Plank",512,{"Personal Quarters":8,"Shooting Range":10,"Dog House":12}),
+R("Zippo Lighter",2050),
+R("Zonophor Tablets",21525,{"Quarters v3":3}),
+// generic rows
+R("Foregrips, grips, stocks, mags, barrels",9225,{},[],[],"loose gun parts · sell what's not on your build · 1–2 slots"),
+R("Rail flashlights, laser sights, scopes",8386,{},[],[],"great value per slot"),
+R("Destroyed HMG / grenade launcher / auto shotgun",0,{},[],[],"repair at Weapon Repairs first, then sell")
+];
+ITEMS.push(R("Adrenaline Stim",4100,{},[],[["Violence of Action",1,0]]));
+// Unverified rows: shown with a "?" so anyone can check them in-game
+const UNSURE={
+"Adrenaline Stim":"An older wiki guide lists it for Violence of Action, but the current wiki database doesn't.",
+"Targeting Computer":"The quest link comes from the wiki's money tips. Not sure if AA Tech Extraction repeats.",
+"Jammer":"The wiki ties it to Clear Skies, but doesn't say whether that quest repeats.",
+"Explosives":"An older guide also listed Tech Theft Prevention ×3. The current database only has Risky Cargo ×2.",
+"Cybernetic Lungs":"An older guide said 6 for Breath of Fresh Smoke. The current database says 3.",
+"Europan IFF Chip LVL1":"An older guide said 6 for Go Home, Conscript. The current database says 5.",
+"Power Cell":"An older guide said 5 for Achilles' Heel. The current database says 2.",
+"Super Glue":"An older guide said 5 for Achilles' Heel. The current database says 3.",
+"Recovery Drone":"An older guide said 5 for Achilles' Heel. The current database says 1.",
+"Frequency Tap":"The wiki lists ×3 three separate times for Transmission Tower Pt. 1, so it may only need 3 in total.",
+"Family Photo":"Marked as a quest item, but no quest is linked to it.",
+"Spare Part":"Only appears on one older wiki page. Price and quest are unconfirmed."
+};
+// Alcohol: The Bar's regulars take drinks for loyalty (spoiler), so never dump it all
+const BAR=["Absinthe","Beer","Brandy","Ethyl Alcohol","Gin","Mead","Mezcal","Rum","Scotch","Tequila","Vodka","Whiskey","Wine"];
+const BAR_NOTE="The Bar: its regulars take drinks for loyalty";
+const BAR_UNSURE="How many drinks the Bar regulars want, and which ones, isn't in the wiki data. Keep a few of each until you know.";
+// Rig space each item takes (L = large bin)
+const SIZE={"\"Beef\" Flavor Packet":5,"Absinthe":30,"Adrenaline Stim":15,"Advanced Joint":15,"Advanced Navigation Device":25,"Advanced Pliers":15,"Analog Headset":25,"Anti-Vertex Bolt Cutters":50,"Armorer's Wrench":25,"Assorted Medicine":15,"AT-43 Breech Assembly":25,"AT-43 Feed Mechanism":25,"AT-43 Muzzle Break":25,"AT-43 Spring System":25,"AT-43 Trigger Assembly":25,"Ball Bearings":5,"Bandages":5,"Banner of the Red Baron":50,"Bar Supplies":75,"Basic Pliers":15,"Battery":5,"Battery Charger":30,"Battle Plans":5,"Beer":10,"Blood Packs":15,"Boinco Candy Bar":5,"Bolt Cutters":35,"Bolts":5,"Brandy":25,"Brawler Insignia":5,"Brawler Spinal Joint":25,"Bug Spray":10,"Bulkhead Lights":50,"Camera":20,"Camera Lens":10,"Car Battery":50,"Carbon Fiber":15,"Carbon Fiber Tube":20,"Clamp":10,"Cleaner":5,"Clear Tube":10,"Comms Device":25,"Computer Fan":5,"Concrete Mixer":75,"Concrete Powder":50,"Construction Foam":15,"Construction Glue":10,"Convoy Schedule":5,"Cordura":15,"Corpse Tank Control Panel":50,"CPU":5,"Crowbar":50,"Crucible":30,"Cybernetic Lungs":25,"Cyborg Immunosuppressant":15,"Cyborg's Head":35,"Data Cache":50,"Deep Fried Coffee":15,"Diagnostic Scanner":20,"Diodegradable Multi-tool":5,"Dog Tags":5,"Dogboro Cigarettes":5,"Dossier":5,"Drywall":35,"Duct Tape":10,"E-Nuggets":15,"EDC Multi-tool":5,"Electric Motor":50,"Encrypted Data Pad":20,"Energy Bar":5,"EOD Armor Plate":35,"EOD Suit Component":25,"ES Lamp":15,"Ethyl Alcohol":30,"Eurasian Brawler Components":20,"Eurasian Drone Cortex":25,"Eurasian IFF Chip LVL1":5,"Eurasian IFF Chip LVL2":5,"Eurasian IFF Chip LVL3":5,"Eurasian Supply Crate":"L","Europa MilTech Radio":60,"Europan Drone Flight Controller":35,"Europan IFF Chip LVL1":5,"Europan IFF Chip LVL2":5,"Europan IFF Chip LVL3":5,"Euruskan IFF Chip LVL1":5,"Euruskan IFF Chip LVL2":5,"Euruskan IFF Chip LVL3":5,"Euruskan Plans":20,"Exo Component":35,"Exo Hard Drive":25,"Exo Repair Kit":45,"Explosives":"L","Family Photo":5,"Fertilizer":15,"Field Repair Kit":25,"Fire Starter Kit":5,"Fleece":15,"Food Tin":15,"Frequency Tap":20,"Fuse":5,"Gin":25,"Glue":5,"Glue Gun":15,"God Sniper Equipment":5,"Goodies":10,"GP-5 Gas Mask":20,"Grindstone":45,"Gunpowder":20,"Gyroscopic Stabilizer":35,"Hammer":15,"Hand Drill":50,"Happy Cookies":10,"Hard Drive":10,"Hard Shell Laptop":15,"Heavy Joint Assembly":15,"Heavy-Duty Battery":25,"Heavy-Duty Trauma Kit":50,"Heirloom Seeds":20,"High Capacity Hard Drive":10,"High Durability Rail Component":15,"High-Frequency Radio":35,"HIND Navigation Computer":25,"Hinoko Cigarettes":5,"Hose":25,"Industrial Black Light":50,"Industrial Chemicals":20,"Industrial Sealant":10,"Intelligence Cassette":5,"Intelligence Disk":5,"Intermediate Tool Set":50,"Jammer":"L","Jerrycan":"L","Jumper Cable Kit":15,"Large Lockbox":"L","Laser Rangefinder":35,"LCD":15,"Leather Hole Punch":25,"Light Bulb":10,"Lighter":5,"Liquid Coolant":15,"Liquid Cooling Unit":35,"Logbook":5,"Machine Parts":15,"Manpack Radio":30,"Masking Tape":5,"Matches":5,"Mead":30,"Measuring Tape":5,"Mech Part":"L","Medical Alcohol":10,"Medical Supplies":15,"Medical Tools":15,"Memento":25,"Merkava Suspension Component":50,"Metal Fragments":5,"Metal Pipe":20,"Metal Slats":35,"Mezcal":30,"Military Battery":60,"Military Cables":10,"Military Circuitry":25,"Military Codebreaker":25,"Military Grade Lubricant":20,"Military Hard Drive":15,"Military PDA":15,"Military Power Cell":25,"Military Tape":10,"Mini MD Drive":5,"Modem":15,"Motherboard":10,"MRE":20,"Multi-frequency Broadcaster":10,"Music Cassette":10,"Mystical Tech Totem":25,"Mystical Tech Totem (Large)":"L","Nails":5,"Neuralink Disc Player":10,"Neuro Uplink Board":5,"Nucky Gold Cigarettes":5,"Nuts":5,"Occulomide Auto-Surgeon":75,"Octogirl's Tool Set":100,"Old Paint Can":35,"Old Tool Set":40,"OLED":25,"Orgamech Nervous System":15,"Organoid Memory Board":25,"Organoid Networking Board":35,"Organoid Outlet":15,"Organoid Plug":35,"Personnel Data":5,"Picture":10,"Pipe Wrench":50,"Portable Generator":75,"Potato Chips":10,"Power Cell":50,"Power Drill":15,"Power Schematics":5,"Power Supply Unit":15,"Precision Components":1,"Precision Tool Set":45,"Preserved Cryo Coffee":25,"Pressure Gauge":25,"Pretzels":5,"Printed Circuit Board":10,"Printing Resin":15,"Prized Alcohol":35,"Processor Board":10,"Quantum Hard Drive":15,"Railgun Assembly Component":15,"Railgun Body Component":15,"Railgun Breech Component":15,"Railgun Cooling Component":15,"Railgun Magazine":15,"Railgun Power Bank":15,"Rare Metals":30,"Ratchet":25,"Rechargeable Battery":10,"Relay":10,"Repair Dronelet":50,"Ribbed Tube":10,"Rootkit Device":25,"Rotary Hammer":35,"Rum":30,"Scavenger's Go-Bag":50,"Scavenger's Tool Kit":25,"Scotch":25,"Screwdriver":10,"Screws":5,"Sealed Mystery Box":"L","Sentient Drill":65,"Sewers Technical Plans":25,"Sewing Kit":10,"Sheet Metal":35,"Sledgehammer":75,"Smuggled Organs":15,"Soap":10,"Solar Battery":75,"Spare Part":"L","Spark Plug":5,"Stereo Box":50,"Stethoscope":5,"Super Glue":5,"Survival Lighter":5,"Survival Seeds":30,"Syringe":10,"T-90 Suspension Component":50,"Targeting Computer":50,"Teddy Bear":10,"Telemetry Unit":15,"Tequila":30,"Thermal Matches":5,"Thermite":15,"Thermometer":10,"Tissue Sample":5,"Toilet Paper":10,"Toothpaste":5,"Tourniquet":5,"Toy Car":5,"Toy Dinosaur":5,"Toy Train":5,"Turret Component":25,"U-STIK+ USB Drive":5,"UMEGA Media Player":25,"Urea":15,"UV Light Bulb":10,"Valve Adjustment Tool":20,"Ventilation Filter":25,"Ventilation Regulator":25,"Vodka":30,"Water Map":15,"Water Thief Mask (large)":"L","Water Thief's Mask \"Bozo\"":35,"Water Thief's Mask \"Oni\"":35,"Water Thief's Mask \"Thirsty\"":35,"WD40":10,"Weapon Parts":15,"Weapon Schematics":5,"Weapon Tech":25,"Wetware Processor":75,"Wetware System":15,"Whiskey":25,"Wine":25,"Wires":5,"Wooden Plank":25,"Zippo Lighter":5,"Zonophor Tablets":10,"Foregrips, grips, stocks, mags, barrels":2,"Rail flashlights, laser sights, scopes":1.1};
+ITEMS.forEach(it=>{if(UNSURE[it.n])it.u=UNSURE[it.n];if(BAR.includes(it.n)){it.bar=1;if(!it.u){it.u=BAR_UNSURE;it.uSpoil=1}}it.s=SIZE[it.n]});
+// The Dog (spoiler): only offerings above the lowest tier are worth a note; lowest-tier drinks and snacks lose theirs
+const DOG={"Food Tin":"low","Goodies":"average","MRE":"high","Smuggled Organs":"best"};
+["Absinthe","Beer","Boinco Candy Bar","Brandy","Energy Bar","Ethyl Alcohol","Gin","Happy Cookies","Mead","Mezcal","Potato Chips","Pretzels","Prized Alcohol","Rum","Scotch","Tequila","Vodka","Whiskey","Wine"].forEach(n=>DOG[n]="lowest");
+// Tobacco Journey: a passive quest from Lordoss whose name never shows in-game
+const TJ_NOTE="Passive quest from Lordoss. Its name never shows in-game: it's his running cigarette deliveries.";
+const TJ_ITEM="Tobacco Journey: Lordoss's running cigarette deliveries";
+const LINE_NOTE={"Tobacco Journey":TJ_NOTE};
+ITEMS.forEach(it=>{if(it.note)it.note=it.note.split(" · ").filter(p=>!/dog food/.test(p)).join(" · ");if(DOG[it.n])it.dog=DOG[it.n]});
+// Upgrade credit cost and build time from the wiki
+const COST={"+16 days":[175000,"1 h"],"+28 days":[750000,"6 h"],"Water Bots V1":[50000,"1 h"],"Water Bots V2":[250000,"6 h"],"Water Bots V3":[750000,"12 h"],"Turrets V1":[75000,"1 h"],"Turrets V2":[150000,"6 h"],"Turrets V3":[500000,"12 h"],"Workshop":[75000,"2 h"],"Munitions Printer":[150000,"2 h"],"Manufacture Booster":[332800,"2 h"],"Repair Bench":[150000,"1 h"],"The Bar":[250000,"6 h"],"Bar V1":[750000,"12 h"],"Bar V2":[1500000,"1 day"],"Bar V3":[2500000,"2 days"],"Transmission Tower":[5000000,"24 h"],"Personal Quarters":[75000,"6 h"],"Quarters v1":[250000,"6 h"],"Quarters v2":[750000,"1 day"],"Quarters v3":[1500000,"2 days"],"Shooting Range":[50000,"6 h"],"Range v1":[125000,"12 h"],"Range v2":[250000,"1 day"],"Range v3":[500000,"2 days"],"Cognition Cradle":[2000000,"12 h"],"Cradle Frame":[3500000,"1 day"],"Cradle Chamber":[5000000,"2 days"],"Dog House":[250000,"1 h"],"Garage":[2500000,"24 h"],"TV Small":[75000,"30 min"],"TV Mega":[1000000,"1.5 h"],"Music System":[25000,"2 h"],"Special Tree":[100000,"45 min"],"Shrine":[2500000,"1 day"]};
+const COST_UNSURE={"Personal Quarters":1,"Quarters v1":1};
+const COST_UNSURE_TXT="The wiki lists two prices under Personal Quarters (75k and 250k). We assumed the second is the v1 upgrade.";
+const NEEDS={};ITEMS.forEach(it=>Object.entries(it.b).forEach(([u,a])=>(NEEDS[u]=NEEDS[u]||[]).push([it.n,a])));
+const kfmt=n=>n>=1e6?(Math.round(n/1e5)/10)+"M":n>=1e3?Math.round(n/1e3)+"k":String(n);
+
+// Spawn profile per item: levels (11 digits in MAPS order: 0 none, 1 rare, 2 common, 3 best for that item) | crate per map | enemy source per map (* = general enemy body loot) | q = quest-only. Letters index NAMES via B64; a single letter = same on every map.
+const MAPS=["Mech Trenches","Scorched Enclave","Ashen Mesa","Scrapyard Nexus","Elephant Mausoleum","Underground Cemetery","Frozen Swamp","Stairway Gate","Downtown Lost Angels","Babel","Tunnels (A–D)"];
+const NAMES=["Provisions Cache", "Medical Bin", "Medical Supplies", "Military Crates", "Eurasian Drone", "Euruskan Drone", "Civil Goods Canister", "Any container", "Materials Bin", "Europan Turret", "Europan Exo", "Storage", "Eurasian Chopper", "Europan Red Baron Exo", "Ground", "Alcohol Vault", "Heavy Brawler", "Eurasian Brawler", "Armaments Bin", "Euruskan Grabber", "Eurasian Opal", "Euruskan OrgaMech", "Europan Merkava Body Tank", "Civilian", "Cyborg Crawler", "Dead Orgamech", "Europan EOD HunterKiller", "Europan Bodyguard USAS-12", "Europan Heavy Shotgunner", "Europan Union Jack", "Europan Drone", "Euruskan Heavy RPD", "Euruskan Sniper SVD", "Infected Euruskan Rider", "Eurasian God Sniper", "Drone Courier (EMR Pt.1)", "Europan Merkava Tank", "Cultist HeavyWeapons", "Civil Goods Canister C", "Armaments Bin (inside the Titan)", "Europan Thief", "Water Thief Skirmisher Raider", "Euruskan T-90 Tank", "AA Gun Supplies", "Water Thief Turret", "Riptide"];
+const SPAWN={"\"Beef\" Flavor Packet":"12211111113|A|-","Absinthe":"23223233333|A|*","Advanced Joint":"22212233323|D|***E*F*****","Advanced Navigation Device":"11111321333|D--DDDDDDDD|*","Advanced Pliers":"11111222223|G|-","Analog Headset":"12211111103|GGGGGGGGG-G|-","Anti-Vertex Bolt Cutters":"10011311333|G--GGGGGGGG|-","Armorer's Wrench":"33333133332|HHHHHDHHHHD|-","Assorted Medicine":"22223232323|BBBBBBBBBCB|*","AT-43 Breech Assembly":"33333133331|HHHHHDHHHHD|-","AT-43 Feed Mechanism":"33333133331|HHHHHDHHHHD|-","AT-43 Muzzle Break":"33333133331|HHHHHDHHHHD|-","AT-43 Spring System":"33333133331|HHHHHDHHHHD|-","AT-43 Trigger Assembly":"33333133331|HHHHHDHHHHD|-","Ball Bearings":"23313122213|IIIIIILIIII|J**-*K***MJ","Bandages":"22222122223|BBBBBBBBBCB|*","Banner of the Red Baron":"00003000000|-|----N------","Bar Supplies":"00000000300|--------O--|-|q","Basic Pliers":"12211111113|G|-","Battery":"12211111113|G|-","Battery Charger":"11111111113|G|-","Battle Plans":"00030000000|---H-------|-","Beer":"23323232323|A|*","Blood Packs":"21122111113|BBBBBBBBBCB|-","Boinco Candy Bar":"23323233333|A|*","Bolt Cutters":"11111222223|G|-","Bolts":"23313122323|I|***E*K*****","Brandy":"11111333332|AAAAAPPPPPA|*","Brawler Insignia":"02333233333|-|-QQQQRQQQQQ","Brawler Spinal Joint":"02333233333|-|-QQQQRQQQQQ","Bug Spray":"12211111113|G|-","Bulkhead Lights":"10011311333|I--IIIIIIII|-","Camera":"12211111113|G|-","Camera Lens":"11111111113|IIIIIIIIIGI|-","Car Battery":"11111111113|G|-","Carbon Fiber":"11111222223|I|-","Carbon Fiber Tube":"10011311333|I--IIIIIIII|-","Clamp":"11111111113|I|-","Cleaner":"12211111113|G|-","Clear Tube":"11111111113|I|-","Comms Device":"00000300000|-----H-----|-","Computer Fan":"12211111113|I|-","Concrete Mixer":"10011311333|I--IIIIIIII|-","Concrete Powder":"11111222223|I|-","Construction Foam":"10011311333|I--IIIIIIII|-","Construction Glue":"11111222223|I|-","Convoy Schedule":"00000030000|------H----|-","Cordura":"11111111113|I|-","Corpse Tank Control Panel":"03303000000|-|-WW-W------","CPU":"23313132323|I|***E*F*****","Crowbar":"11111222223|G|-","Crucible":"33333133331|HHHHHDHHHHD|-","Cybernetic Lungs":"33333233332|-|*****X****Y","Cyborg Immunosuppressant":"33333233332|-|*","Cyborg's Head":"33333233332|-|*****X****Y","Data Cache":"00003000000|----H------|-","Deep Fried Coffee":"12222233333|A|*","Diagnostic Scanner":"22222232323|B--BBBBBBCB|*","Diodegradable Multi-tool":"12211111113|G|-","Dog Tags":"00000003000|-------H---|-","Dogboro Cigarettes":"23323132323|A|*","Dossier":"23323133332|-|*","Drywall":"11111111113|I|-","Duct Tape":"11111111113|I|-","E-Nuggets":"12223122232|AAAAZAAAACA|*","EDC Multi-tool":"23323233333|G|*","Electric Motor":"23313233323|I|***E*F*****","Encrypted Data Pad":"10011131111|D--DDDLDDDD|-","Energy Bar":"23323233333|A|*","EOD Armor Plate":"11113011110|-|aaabc-*a*a-","EOD Suit Component":"11133313310|-|aaaddd*d*a-","ES Lamp":"11111111113|I|-","Ethyl Alcohol":"23323232323|A|*","Eurasian Brawler Components":"02333233333|-|-QQQQRQQQQQ","Eurasian Drone Cortex":"33333232322|-|EEEEEFEEEFE","Eurasian IFF Chip LVL1":"23333122322|-|E****F*****","Eurasian IFF Chip LVL2":"23333122322|-|E****F*****","Eurasian IFF Chip LVL3":"23333232322|-|E****F*****","Eurasian Supply Crate":"00030000000|---O-------|-|q","Europa MilTech Radio":"00003000000|----O------|-","Europan Drone Flight Controller":"22202032222|-|eee-e-eeeee","Europan IFF Chip LVL1":"23223132322|-|*****d*****","Europan IFF Chip LVL2":"23213122221|-|*****d*****","Europan IFF Chip LVL3":"23213132322|-|*****d*****","Euruskan IFF Chip LVL1":"03323223231|-|-**f*ff*f*g","Euruskan IFF Chip LVL2":"03323123231|-|-**f*ff*f*g","Euruskan IFF Chip LVL3":"03323123231|-|-**f*ff*f*g","Euruskan Plans":"03000000000|-H---------|-","Exo Component":"13203112211|-|K**-*KK**KK","Exo Hard Drive":"13303112211|-|K**-*KK**KK","Exo Repair Kit":"10011311333|D--DDDDDDDD|---------h-","Explosives":"33333333330|OOOOOOOOOO-|-","Family Photo":"00000003000|-------H---|-","Fertilizer":"12212111113|I|--i-c----h-","Field Repair Kit":"21122111113|D|---------h-","Fire Starter Kit":"12211111113|G|-","Fleece":"11111111113|I|-","Food Tin":"23223122233|AAAAZAAAACA|*","Frequency Tap":"11111222223|D|-","Fuse":"12211111113|D|-","Gin":"23322233333|AAAAAPPPPPA|*","Glue":"12211111113|I|-","Glue Gun":"11111111113|G|---------h-","God Sniper Equipment":"00300000000|-|--i--------","Goodies":"23333233333|A|*","GP-5 Gas Mask":"12211111113|D|-fffffffffg","Grindstone":"33333133332|HHHHHDHHHHD|-","Gunpowder":"21122121113|D|-","Gyroscopic Stabilizer":"23313132322|-|***E*F*****","Hammer":"12211111113|G|-","Hand Drill":"12211111113|G|-","Happy Cookies":"23323233333|A|*","Hard Drive":"12211111113|G|-","Hard Shell Laptop":"23323132332|-|*","Heavy Joint Assembly":"11112113112|DDDDDDDODDD|***E*F*****","Heavy-Duty Battery":"11111222223|G|---------h-","Heavy-Duty Trauma Kit":"12212232323|BBBBBBBBBCB|*","Heirloom Seeds":"10011311333|G--GGGGGGGG|-","High Capacity Hard Drive":"11111111113|G|-","High Durability Rail Component":"11113111111|D--DjDLDDDD|K**-*KK**KK","High-Frequency Radio":"21122111113|D|-","HIND Navigation Computer":"03303033330|-|-MM-M-MMMM-","Hinoko Cigarettes":"23323233333|A|*","Hose":"12211111113|I|-","Industrial Black Light":"10011311333|I--IIIIIIII|-","Industrial Chemicals":"11111111113|I|-","Industrial Sealant":"11111222223|I|-","Intelligence Cassette":"23323133332|-|*","Intelligence Disk":"23323133332|-|*","Intermediate Tool Set":"11111111113|G|-","Jammer":"00000030000|------O----|-|q","Jerrycan":"03000000030|-O-------O-|-","Jumper Cable Kit":"12211111113|G|---------h-","Large Lockbox":"33333333330|OOOOOOOOOO-|-","Laser Rangefinder":"12222233333|D|*","LCD":"11111111113|I|-","Leather Hole Punch":"11111111113|G|-","Light Bulb":"11111111113|I|-","Lighter":"23323232333|G|*","Liquid Coolant":"11111111113|I|-","Liquid Cooling Unit":"23313132323|I|***E*F*****","Logbook":"00000300000|-----H-----|-","Machine Parts":"23313122213|I|J**-*K***MJ","Manpack Radio":"12222233333|D|*","Masking Tape":"12211111113|G|-","Matches":"23323232333|G|*","Mead":"23223233333|A|*","Measuring Tape":"12211111113|G|-","Mech Part":"30000000000|O----------|-|q","Medical Alcohol":"21122111113|BBBBBBBBBCB|-","Medical Supplies":"00000000030|---------H-|-","Medical Tools":"12212232323|BBBBBBBBBCB|*","Memento":"00000000030|---------G-|-","Merkava Suspension Component":"03303000200|-|-kk-k---k--","Metal Fragments":"23313132323|IIIIIILIIII|***E*K*****","Metal Pipe":"12211121113|IIIIIILIIII|-","Metal Slats":"12211111113|I|-","Mezcal":"12222233333|AAAAAPPPPPA|*","Military Battery":"12212233323|D|***E*F****E","Military Cables":"12211111113|D|-","Military Circuitry":"22212233323|D|***E*F*****","Military Codebreaker":"10011311333|D--DDDDDDDD|-","Military Grade Lubricant":"23233132323|D|*","Military Hard Drive":"00000000030|-|---------h-","Military PDA":"22223122233|DDDDDDDDDCD|*","Military Power Cell":"22212233323|D|***E*F*****","Military Tape":"12211111113|D|-","Mini MD Drive":"12211111113|G|-","Modem":"11111111113|G|-","Motherboard":"23313123323|I|J**-*K***MJ","MRE":"11113131132|AAAAZALAACA|*","Multi-frequency Broadcaster":"12212131211|----Z-L--C-|***E*F****E","Music Cassette":"11111111103|GGGGGGGGG-G|-","Mystical Tech Totem":"02202300003|-|-ll-ll----l","Mystical Tech Totem (Large)":"00030000000|---O-------|-|q","Nails":"11111111113|I|-","Neuralink Disc Player":"11111111113|G|-","Neuro Uplink Board":"11111222223|D|-","Nucky Gold Cigarettes":"13323233333|A|*","Nuts":"23313122323|I|***E*K*****","Occulomide Auto-Surgeon":"22222232323|B--BBBBBBCB|*","Octogirl's Tool Set":"00000300000|-----m-----|-|q","Old Paint Can":"11112131113|IIIIIILIIII|-","Old Tool Set":"12211111113|G|-","OLED":"11111222223|I|-","Orgamech Nervous System":"10013111111|D--DZDDDDDD|-","Organoid Memory Board":"11111222223|I|-","Organoid Networking Board":"10011311333|I--IIIIIIII|-","Organoid Outlet":"11111222223|I|-","Organoid Plug":"11111222223|I|-","Personnel Data":"00000003000|-------H---|-","Picture":"00300000000|--H--------|-","Pipe Wrench":"12211111113|G|-","Portable Generator":"10011311333|G--GGGGGGGG|---------h-","Potato Chips":"23323132323|A|*","Power Cell":"23313132323|I|***E*F*****","Power Drill":"11111111113|G|-","Power Schematics":"00300000000|--n--------|-","Power Supply Unit":"12211111113|I|-","Precision Components":"00003000000|----H------|-","Precision Tool Set":"11111222223|G|---------h-","Preserved Cryo Coffee":"12222222333|A--AAAAAAAA|*","Pressure Gauge":"12211111113|I|-","Pretzels":"23323132323|A|*","Printed Circuit Board":"23313122323|I|***E*K*****","Printing Resin":"11111111113|I|-","Prized Alcohol":"30303111110|-----PPPPP-|o-o-o------","Processor Board":"23313132323|I|***E*F*****","Quantum Hard Drive":"10011311333|G--GGGGGGGG|-","Railgun Assembly Component":"12213321333|D--DDDLDDDD|K**-*KK**KK","Railgun Body Component":"13111111111|DO-DDDLDDDD|K**-*KK**KK","Railgun Breech Component":"11331111111|D-OODDLDDDD|K**-*KK**KK","Railgun Cooling Component":"12213321333|D--DDDLDDDD|K**-*KK**KK","Railgun Magazine":"11311111111|D-ODDDLDDDD|K**-*KK**KK","Railgun Power Bank":"12213321333|D--DDDLDDDD|K**-*KK**KK","Rare Metals":"23313132322|-|*****F*****","Ratchet":"11111111113|G|-","Rechargeable Battery":"11111111113|G|-","Relay":"23313122213|I|J**-*K***MJ","Repair Dronelet":"11111222223|D|-","Ribbed Tube":"23313122213|I|J**-*K***MJ","Rootkit Device":"10011311333|D--DDDDDDDD|-","Rotary Hammer":"11111222223|G|-","Rum":"23223233333|A|*","Scavenger's Go-Bag":"11111111131|GGGGGGGGGHG|----p-pp---","Scavenger's Tool Kit":"12211111113|G|---------h-","Scotch":"11111333331|A--AAPPPPPA|*","Screwdriver":"12211111113|G|-","Screws":"11111111113|I|-","Sealed Mystery Box":"33333333330|OOOOOOOOOO-|-","Sentient Drill":"10011311333|G--GGGGGGGG|-","Sewers Technical Plans":"00000000300|--------H--|-","Sewing Kit":"11111111113|G|-","Sheet Metal":"11111111113|I|-","Sledgehammer":"11111222223|G|-","Smuggled Organs":"12212311113|B--BBBBBBCB|-ll-ll---hl","Soap":"23323233333|G|*","Solar Battery":"10011311333|G--GGGGGGGG|-","Spark Plug":"12211111113|I|-","Stereo Box":"11111111103|GGGGGGGGG-G|-","Stethoscope":"12211111113|BBBBBBBBBCB|-","Super Glue":"11111111113|I|-","Survival Lighter":"23323133333|G|*","Survival Seeds":"11111222223|G|-","Syringe":"12211111113|BBBBBBBBBCB|-","T-90 Suspension Component":"03303000300|-|-qq-q---q--","Targeting Computer":"00300000000|--r--------|-","Teddy Bear":"00030000000|---H-------|-","Telemetry Unit":"12212233323|D|***E*F****E","Tequila":"12222233333|AAAAAPPPPPA|*","Thermal Matches":"23323133333|G|*","Thermite":"11111222223|D|-","Thermometer":"11111222213|BBBBBBBBBCB|-","Tissue Sample":"00000000030|-|---------h-","Toilet Paper":"23323232332|G--GGGGGGGG|*","Toothpaste":"11111222223|G|-","Tourniquet":"22222122223|BBBBBBBBBCB|*","Toy Car":"11111111113|G|-","Toy Dinosaur":"11111111113|G|-","Toy Train":"11111111113|G|-","Turret Component":"22202032202|-|JJJ-J-JJs-J","U-STIK+ USB Drive":"23323232333|G|*","UMEGA Media Player":"11111222223|G|-","Urea":"12211111113|I|-","UV Light Bulb":"11111222223|I|-","Valve Adjustment Tool":"11111111113|G|-","Ventilation Filter":"11111222223|I|-","Ventilation Regulator":"10011311333|I--IIIIIIII|-","Vodka":"23323232323|A|*","Water Map":"00300000100|--H--------|--------t--","Water Thief Mask":"00000030000|------O----|-","Water Thief's Mask \"Bozo\"":"00003033000|-|----p-pp---","Water Thief's Mask \"Oni\"":"00003033000|-|----p-pp---","Water Thief's Mask \"Thirsty\"":"00003033000|-|----p-pp---","WD40":"11111111113|I|-","Weapon Parts":"23212122213|D|***E*K*****","Weapon Schematics":"00000030000|------H----|-","Weapon Tech":"03000000000|-H---------|-","Wetware Processor":"10011311333|I--IIIIIIII|-","Wetware System":"33333333330|HHHHHHHHHH-|-","Whiskey":"11111333331|A--AAPPPPPA|*","Wine":"10011333331|A--AAPPPPPA|--------th-","Wires":"23313122323|I|***E*K*****","Wooden Plank":"12211111113|I|-","Zippo Lighter":"23323133333|G|*","Zonophor Tablets":"23323232323|B--BBBBBBCB|*"};
+const B64="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_$";
+const spawnOf=n=>SPAWN[n==="Water Thief Mask (large)"?"Water Thief Mask":n];
+const pick=(s,m)=>{const ch=s.length===1?s:s[m];return ch&&ch!=="-"?ch:null};
+const srcOn=(n,m)=>{const s=spawnOf(n);if(!s)return null;const [,cs,us]=s.split("|");const c=pick(cs,m),u=pick(us,m);
+  const crate=c?NAMES[B64.indexOf(c)]:null, enemy=u?(u==="*"?"*":NAMES[B64.indexOf(u)]):null;
+  const cTxt=crate?(crate==="Ground"?"on the ground":crate==="Any container"?"in any container":"in "+crate):"";
+  if(cTxt&&enemy) return cTxt+(enemy==="*"?" · also on enemy bodies":" · also dropped by "+enemy);
+  if(cTxt) return cTxt;
+  if(enemy) return enemy==="*"?"on enemy bodies":"dropped by "+enemy;
+  return null};
+const where=c=>c.startsWith("drop: ")?"dropped by "+c.slice(6):c==="Ground"?"on the ground":c==="Any container"?"any container":"in "+c;
+
+let done={};try{done=JSON.parse(localStorage.getItem("tfw-done")||"{}")}catch(e){done={}}
+let selMaps=[];try{selMaps=JSON.parse(localStorage.getItem("tfw-maps")||"[]")}catch(e){selMaps=[]}
+const saveMaps=()=>{try{localStorage.setItem("tfw-maps",JSON.stringify(selMaps))}catch(e){}};
+const save=()=>{try{localStorage.setItem("tfw-done",JSON.stringify(done))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=n=>n?n.toLocaleString("en-US"):"—";
+const STORY=[...new Set(ITEMS.flatMap(it=>it.q.filter(x=>!x[2]).map(x=>x[0])))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+let uid=0;
+let sf=false;try{sf=localStorage.getItem("tfw-sf")==="1"}catch(e){}
+const BOSS=/(Alcohol Vault|inside the Titan|Drone Courier[^,;]*|AA Gun Supplies|Cultist HeavyWeapons|Union Jack|Skull Face|Civil Goods Canister C|Red Baron|Mother ?Courage|Rat King|Toothy|Orga Codex|Shield Officer|Octogirl|God Sniper|Riptide|Opal|Sand-Diver HK|HK's Mnemonic Index|HK Components)/g;
+const spl=t=>`<span class="spoil" tabindex="0" role="button" aria-label="Hidden spoiler, press to reveal" title="Spoiler: tap to reveal">${t}</span>`;
+const sp=s=>{const e=esc(s);return sf?e.replace(BOSS,spl):e};
+const spq=s=>sf?spl(esc(s)):esc(s);
+const box=(name,extra="",quest=false)=>{const id="c"+(uid++);return `<label class="${done[name]?"on":""}" for="${id}"><input type="checkbox" id="${id}" data-k="${esc(name)}" ${done[name]?"checked":""}><span class="t">${quest?spq(name):esc(name)}</span>${extra}</label>`};
+let goal="";try{goal=localStorage.getItem("tfw-goal")||""}catch(e){}
+let ucol={};try{ucol=JSON.parse(localStorage.getItem("tfw-ucol")||"{}")}catch(e){ucol={}}
+const LINES={};STORY.forEach(q=>{const l=q.replace(/ Pt\.? ?\d+$/,"");(LINES[l]=LINES[l]||[]).push(q)});
+// Story chains in rough game order; each chain follows the wiki's questline steps
+const CHAINS=[
+ {n:"Tutorial",g:"Eurasia, then the Scavengers",q:["Steel on High","Go Home, Conscript","Violence of Action","Toyetic Action"]},
+ {n:"Lordoss",g:"Lordoss (Euruska)",q:["Tobacco Journey","Breath of Fresh Smoke","Backbones for the Backbone","Nervous Upgrade","Oiled Joints","Target Awareness","Giant's Senses"]},
+ {n:"The Bar",g:"The Bartender (Scavengers)",q:["Fetch Bar Supplies"]},
+ {n:"Doctor Morrow",g:"Doctor Morrow (Europa)",q:["Doctor Morrow"]},
+ {n:"Bunco",g:"Bunco (Scavengers)",q:["Garage Days","Electro-Magnetic Railway"]},
+ {n:"Trophy Room",g:"Octogirl, with one job from Bunco",q:["A Cost Will Be Paid","Achilles' Heel","Build Mother Courage's Body Rack","Collect Sand-Diver HK Components","Collect HK Components"]},
+ {n:"Transmission Tower",g:"Velko, then Octogirl",q:["Transmission Tower"]}
+];
+const partsOf=e=>LINES[e]||(STORY.includes(e)?[e]:[]);
+(()=>{const used=new Set(CHAINS.flatMap(c=>c.q.flatMap(partsOf)));const rest=STORY.filter(x=>!used.has(x));if(rest.length)CHAINS.push({n:"Other",g:"",q:rest})})();
+const CHAIN_ORDER_NOTE="Chains are in rough game order. The order inside each chain comes from the wiki; the order between chains is our best guess.";
+const upRow=u=>{const c=COST[u],nd=(NEEDS[u]||[]).slice().sort((a,b)=>b[1]-a[1]);
+  const meta=(c?kfmt(c[0])+" cr · "+c[1]:"")+(nd.length?" · "+nd.length+" items":"");
+  const uq=COST_UNSURE[u]?`<span class="unsure" role="img" aria-label="Unverified: ${esc(COST_UNSURE_TXT)}" title="${esc(COST_UNSURE_TXT)}">?</span>`:"";
+  const tgt=!done[u]&&nd.length?`<button class="tgt${goal==="u:"+u?" on":""}" type="button" data-goal="u:${esc(u)}" title="Plan a raid for ${esc(u)}" aria-label="Plan a raid for ${esc(u)}" aria-pressed="${goal==="u:"+u}">PLAN</button>`:"";
+  return `<div class="up"><div class="uprow">${box(u,`<span class="w">${WATER[u]} water</span>`)}${tgt}</div><details class="need"><summary>${meta}${uq}</summary><ul>${nd.map(([n,a])=>`<li>${sp(n)} <b>×${a}</b></li>`).join("")||"<li>No items, only credits</li>"}</ul></details></div>`};
+function drawProgress(){
+  uid=0;
+  document.getElementById("ups").innerHTML=GROUPS.map(g=>{const built=g[1].filter(u=>done[u]).length,all=built===g[1].length;
+    const open=g[0] in ucol?!ucol[g[0]]:!all;
+    return `<details class="ugrp" data-g="${esc(g[0])}" ${open?"open":""}><summary>${esc(g[0])}<span class="cnt${all?" full":""}">${all?"all built":built+"/"+g[1].length+" built"}</span></summary><div class="grp">${g[1].map(upRow).join("")}</div></details>`}).join("");
+  const entry=e=>{const parts=partsOf(e);if(!parts.length)return "";
+    if(parts.length===1)return box(parts[0],"",true);
+    const nDone=parts.filter(p=>done[p]).length,all=nDone===parts.length,id="L"+(uid++);
+    return `<div class="qline"><label class="${all?"on":""}" for="${id}"><input type="checkbox" id="${id}" data-line="${esc(e)}" ${all?"checked":""}><span class="t">${spq(e)}</span><span class="w">${nDone}/${parts.length}</span></label>${LINE_NOTE[e]?`<span class="qnote">${spq(LINE_NOTE[e])}</span>`:""}<details><summary>${parts.length} parts</summary><div class="grp">${parts.map(p=>box(p,"",true)).join("")}</div></details></div>`};
+  document.getElementById("qs").innerHTML=`<span class="qorder">${esc(CHAIN_ORDER_NOTE)}<span class="unsure" aria-hidden="true">?</span></span>`+CHAINS.map(c=>{const all=c.q.flatMap(partsOf),nd=all.filter(p=>done[p]).length,full=nd===all.length;
+    const key="q:"+c.n,open=key in ucol?!ucol[key]:!full;
+    return `<details class="chain ugrp" data-g="${esc(key)}" ${open?"open":""}><summary>${c.n==="Tutorial"||c.n==="Other"?esc(c.n):spq(c.n)}<span class="cnt${full?" full":""}">${full?"all done":nd+"/"+all.length+" done"}</span></summary>${c.g?`<span class="giver">Given by ${spq(c.g)}</span>`:""}<div class="grp">${c.q.map(entry).join("")}</div></details>`}).join("");
+  updTogo();
+}
+function updTogo(){drawGoalOptions();const left=Object.keys(COST).filter(u=>!done[u]).reduce((s,u)=>s+COST[u][0],0);
+  document.getElementById("togo").textContent=left?kfmt(left)+" credits left to build everything":"Everything built";}
+function verdict(it){
+  const ups=Object.entries(it.b), story=it.q.filter(x=>!x[2]), rep=it.q.filter(x=>x[2]);
+  let rem=0; ups.forEach(([u,a])=>{if(!done[u])rem+=a}); story.forEach(([s,a])=>{if(!done[s])rem+=a});
+  const repMax=rep.reduce((m,x)=>Math.max(m,x[1]),0);
+  const used=ups.length||it.q.length||it.c.length;
+  if(it.open) return {k:"always",lab:"Open first",cls:"t-rep",qty:"—"};
+  if(rem>0) return {k:"keep",lab:"Keep",cls:"t-keep",qty:rem+(repMax?" +"+repMax:"")};
+  if(repMax) return {k:"keep",lab:"Keep a few",cls:"t-rep",qty:repMax};
+  if(it.bar) return {k:"keep",lab:"Keep a few",cls:"t-rep",qty:"a few"};
+  if(it.c.length) return {k:"craft",lab:"Craft stock",cls:"t-craft",qty:"a few"};
+  if(used) return {k:"free",lab:"Sell now",cls:"t-free",qty:"—"};
+  return {k:"always",lab:"Always sell",cls:"t-sell",qty:"—"};
+}
+let sortBy="price";try{sortBy=localStorage.getItem("tfw-sort")||"price"}catch(e){}
+const ps=it=>it.s==="L"||!it.s||!it.v?-1:it.v/it.s;
+const perSpace=it=>it.s==="L"?"large bin":ps(it)>0?fmt(Math.round(ps(it))):"—";
+const sellCmp=(a,b)=>sortBy==="space"?(ps(b)-ps(a)||b.v-a.v):b.v-a.v;
+const uMark=it=>it.u?`<span class="unsure" role="img" aria-label="Unverified" title="Unverified. The reason is under the item name.">?</span>`:"";
+const uLine=it=>it.u?`<span class="ureason">? Unverified: ${it.uSpoil?spq(it.u):esc(it.u)}</span>`:"";
+const barLine=it=>it.bar?`<span class="barnote">${spq(BAR_NOTE)}</span>`:"";
+const dogLine=it=>(it.q.some(x=>/^Tobacco Journey/.test(x[0]))?`<span class="barnote">${spq(TJ_ITEM)}</span>`:"")+(it.dog?`<span class="barnote">${spq("The Dog: "+(it.dog==="best"?"its best offering, brings the best box":it.dog==="lowest"?"lowest-tier offering":it.dog+"-tier offering for its loot box"))}</span>`:"");
+let filter="all";const q=document.getElementById("q");
+const ORDER={free:0,always:1,keep:2,craft:3};
+function render(){
+  const term=q.value.trim().toLowerCase();let n=0,freed=0,html="";
+  const list=ITEMS.map(it=>({it,v:verdict(it)}));
+  list.forEach(x=>{if(x.v.k==="free")freed++});
+  list.sort((a,b)=>ORDER[a.v.k]-ORDER[b.v.k]||((a.v.k==="free"||a.v.k==="always")?sellCmp(a.it,b.it):a.it.n.localeCompare(b.it.n)));
+  document.getElementById("unsurechip").textContent="? Unverified ("+ITEMS.filter(i=>i.u).length+")";
+  list.forEach(({it,v})=>{
+    if(filter==="sell"&&v.k!=="free"&&v.k!=="always")return;
+    if(filter==="keep"&&v.k!=="keep")return;
+    if(filter==="craft"&&v.k!=="craft")return;
+    if(filter==="unsure"&&!it.u)return;
+    const hay=[it.n,it.note,it.u,...Object.keys(it.b),...it.q.map(x=>x[0]),...it.c].join(" ").toLowerCase();
+    if(term&&!hay.includes(term))return;
+    n++;
+    const parts=[];
+    Object.entries(it.b).forEach(([u,a])=>parts.push(done[u]?`<s>${esc(u)} ×${a}</s>`:`${esc(u)} ×${a}`));
+    it.q.filter(x=>!x[2]).forEach(([s,a])=>parts.push(done[s]?`<s>${spq(s)} ×${a}</s>`:`${spq(s)} ×${a}`));
+    it.q.filter(x=>x[2]).forEach(([s,a])=>parts.push(`<span class="rp">↻ ${spq(s)} ×${a}</span>`));
+    let txt=parts.join(", ");
+    if(it.c.length) txt+=(txt?" · ":"")+"<em>crafts</em> "+it.c.map(esc).join(", ");
+    html+=`<tr><td class="name">${sp(it.n)}${uMark(it)}${it.note?`<small>${esc(it.note)}</small>`:""}${barLine(it)}${dogLine(it)}${uLine(it)}</td><td><span class="tag ${v.cls}">${v.lab}</span></td><td class="qty">${v.qty}</td><td class="val">${fmt(it.v)}</td><td class="val">${perSpace(it)}</td><td class="for">${txt||"—"}</td></tr>`;
+  });
+  document.getElementById("rows").innerHTML=html;
+  document.getElementById("empty").hidden=n>0;
+  document.getElementById("count").textContent=n+" item"+(n===1?"":"s");
+  document.getElementById("freed").textContent=freed?freed+" freed to sell":"";
+  renderMaps();
+}
+function drawMapChecks(){
+  document.getElementById("mapchecks").innerHTML=MAPS.map((m,i)=>`<label class="${selMaps.includes(i)?"on":""}" for="m${i}"><input type="checkbox" id="m${i}" data-m="${i}" ${selMaps.includes(i)?"checked":""}>${esc(m)}</label>`).join("");
+}
+const lvOf=n=>{const s=spawnOf(n);return s?[...s.split("|")[0]].map(Number):null};
+function goalLabel(g){if(!g)return "";const [t,n]=[g.slice(0,2),g.slice(2)];return n}
+function goalItems(g){const t=g.slice(0,2),n=g.slice(2),out=[];
+  if(t==="u:"){if(done[n])return out;ITEMS.forEach(it=>{if(it.b[n])out.push({it,need:it.b[n]})})}
+  else{const parts=(t==="l:"?(LINES[n]||[]):[n]).filter(p=>!done[p]);ITEMS.forEach(it=>{const a=it.q.filter(x=>!x[2]&&parts.includes(x[0])).reduce((s,x)=>s+x[1],0);if(a)out.push({it,need:a})})}
+  return out.sort((a,b)=>b.need-a.need)}
+function drawGoalOptions(){
+  const sel=document.getElementById("goalsel");
+  const ups=GROUPS.map(g=>{const o=g[1].filter(u=>!done[u]&&(NEEDS[u]||[]).length).map(u=>`<option value="u:${esc(u)}">${esc(u)}</option>`).join("");return o?`<optgroup label="${esc(g[0])}">${o}</optgroup>`:""}).join("");
+  const qs=CHAINS.map((c,ci)=>{let k=0;const o=c.q.map(e=>{k++;const parts=partsOf(e).filter(p=>!done[p]);if(!parts.length)return "";
+      const val=(LINES[e]&&LINES[e].length>1?"l:":"q:")+(LINES[e]&&LINES[e].length>1?e:parts[0]);
+      const g=(LINES[e]&&LINES[e].length>1?"l:"+e:"q:"+parts[0]);return goalItems(g).length?`<option value="${esc(val)}">${sf?`Chain ${ci+1}, quest ${k}`:esc(LINES[e]&&LINES[e].length>1?e:parts[0])}</option>`:""}).join("");
+    return o?`<optgroup label="${sf&&c.n!=="Tutorial"?"Story chain "+(ci+1)+" (name hidden: spoiler-free mode is on)":"Story: "+esc(c.n)}">${o}</optgroup>`:""}).join("");
+  sel.innerHTML=`<option value="">No goal: just browse maps</option>`+ups+qs;
+  sel.value=[...sel.options].some(o=>o.value===goal)?goal:"";if(sel.value!==goal){goal=sel.value;saveGoal()}
+}
+const saveGoal=()=>{try{localStorage.setItem("tfw-goal",goal)}catch(e){}};
+function renderGoal(){
+  const gr=document.getElementById("goalres");
+  if(!goal){gr.innerHTML="";return null}
+  const items=goalItems(goal);const name=goalLabel(goal),isQ=goal[0]!=="u";
+  const title=isQ?spq(name):esc(name);
+  if(!items.length){gr.innerHTML=`<div class="goalbox"><span class="goalsum"><b>${title}</b>: nothing left to collect. Build it or turn it in!</span></div>`;return {name,left:0}}
+  const score=MAPS.map((m,i)=>{let c=0,s=0;items.forEach(({it})=>{const L=lvOf(it.n);if(L&&L[i]){c++;s+=L[i]}});return {i,c,s}}).filter(x=>x.c).sort((a,b)=>b.c-a.c||b.s-a.s);
+  const runs=score.slice(0,4).map((x,k)=>`<button class="run${k===0?" top":""}" type="button" data-run="${x.i}">${esc(MAPS[x.i])}<small>${x.c}/${items.length} items</small></button>`).join("");
+  const rows=items.map(({it,need})=>{const L=lvOf(it.n);let maps="";
+    if(L){const top=L.map((v,i)=>({v,i})).filter(x=>x.v).sort((a,b)=>b.v-a.v).slice(0,3);maps=top.map(x=>`<b>${esc(MAPS[x.i])}</b> ${sp(srcOn(it.n,x.i)||"")}`).join("<br>")}
+    else maps=esc(it.note||"no spawn data");
+    return `<tr><td class="name">${sp(it.n)}${uMark(it)}</td><td class="qty">×${need}</td><td class="maps">${maps}</td></tr>`}).join("");
+  const best=score[0];
+  gr.innerHTML=`<div class="goalbox"><span class="goalsum"><b>${title}</b> still needs ${items.length} item${items.length===1?"":"s"}.${best?` Best run: <b>${esc(MAPS[best.i])}</b>, which has ${best.c} of them. Tap a map to browse it below.`:""}</span>${runs?`<div class="runs">${runs}</div>`:""}<div class="table-box"><table><thead><tr><th>Item</th><th>Need</th><th>Best maps · where</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+  return {name,left:items.length,best:best&&MAPS[best.i],set:new Set(items.map(x=>x.it.n))};
+}
+function renderMaps(){
+  const box=document.getElementById("mapres"),sum=document.getElementById("mapsum");
+  const G=renderGoal();
+  const gsum=G?(G.left?`${goal[0]!=="u"&&sf?"story goal":G.name} · ${G.left} item${G.left===1?"":"s"} left${G.best?" · best run: "+G.best:""}`:`${goal[0]!=="u"&&sf?"story goal":G.name} · ready`):"";
+  if(!selMaps.length){box.innerHTML=`<div class="empty" style="grid-column:1/-1">Tick a map above to browse what to grab there.</div>`;sum.textContent=gsum||"pick a goal or a map";return}
+  sum.textContent=[gsum,selMaps.map(i=>MAPS[i]).join(" · ")].filter(Boolean).join("  |  ");
+  const need=[],sell=[];
+  ITEMS.forEach(it=>{
+    const sp=spawnOf(it.n);if(!sp)return;
+    const [lv,,,qf]=sp.split("|");const L=[...lv].map(Number);
+    const here=Math.max(...selMaps.map(i=>L[i]));if(!here)return;
+    const spots=L.filter(x=>x>0).length, bestMaps=L.map((x,i)=>x===3?i:-1).filter(i=>i>=0);
+    const bestHere=bestMaps.length<=3&&selMaps.some(i=>L[i]===3);
+    const at=selMaps.filter(i=>L[i]>0).map(i=>({i,c:srcOn(it.n,i)})).filter(x=>x.c).sort((a,b)=>L[b.i]-L[a.i]);
+    const uniq=[...new Set(at.map(x=>x.c))];
+    const wt=!at.length?"":uniq.length===1?uniq[0]:at.slice(0,2).map(x=>MAPS[x.i]+": "+x.c).join("; ")+(at.length>2?"; varies on other maps":"");
+    const rec={it,v:verdict(it),here,spots,bestHere,bestMaps,wt,q:qf==="q"};
+    rec.goal=!!(G&&G.set&&G.set.has(it.n));
+    if(rec.v.k==="keep"||rec.v.k==="craft")need.push(rec);else if(it.v)sell.push(rec);
+  });
+  const rank=r=>(r.spots<=3?3:0)+(r.bestHere?2:0)+r.here;
+  need.sort((a,b)=>b.goal-a.goal||(a.v.k==="craft")-(b.v.k==="craft")||rank(b)-rank(a)||a.it.n.localeCompare(b.it.n));
+  sell.sort((a,b)=>(b.here>=2)-(a.here>=2)||sellCmp(a.it,b.it));
+  const tag=r=>(r.goal?`<span class="badge goal">goal</span>`:"")+(r.spots<=3?`<span class="badge">only ${r.spots===1?"here":"a few maps"}</span>`:r.bestHere?`<span class="badge">best map</span>`:"")+(r.q?`<span class="badge q">quest active</span>`:"");
+  const best=r=>r.bestMaps.length&&r.bestMaps.length<=3?"best on "+r.bestMaps.map(i=>MAPS[i]).join(", "):"";
+  const shown=showAllNeed?need:need.slice(0,30);
+  const needRows=shown.map(r=>`<tr><td class="name">${sp(r.it.n)}${uMark(r.it)}${tag(r)}<small>${[r.wt,best(r)].filter(Boolean).map(sp).join(" · ")}</small></td><td><span class="tag ${r.v.cls}">${r.v.lab}</span></td><td class="qty">${r.v.qty}</td></tr>`).join("");
+  const sellRows=sell.slice(0,25).map(r=>`<tr><td class="name">${sp(r.it.n)}${uMark(r.it)}${tag(r)}<small>${sp(r.wt)}${r.it.note?" · "+esc(r.it.note):""}${sortBy==="space"&&ps(r.it)>0?" · "+fmt(Math.round(ps(r.it)))+" per space":""}</small></td><td class="val">${fmt(r.it.v)}</td></tr>`).join("");
+  box.innerHTML=`<div style="min-width:0"><h3>Still needed · ${need.length}</h3><div class="table-box"><table><thead><tr><th>Item</th><th>Verdict</th><th>Keep</th></tr></thead><tbody>${needRows||`<tr><td colspan="3" class="empty">Nothing left to collect here.</td></tr>`}</tbody></table></div>${need.length>30?`<button class="reset" id="needall" type="button" style="margin-top:8px">${showAllNeed?"Show the top 30":"Show all "+need.length}</button>`:""}</div>
+  <div style="min-width:0"><h3>Best to sell here</h3><div class="table-box"><table><thead><tr><th>Item</th><th class="r">Sells</th></tr></thead><tbody>${sellRows||`<tr><td colspan="2" class="empty">No sellables listed for these maps.</td></tr>`}</tbody></table></div></div>`;
+}
+document.getElementById("mapchecks").addEventListener("change",e=>{
+  const i=+e.target.dataset.m;if(isNaN(i))return;
+  selMaps=e.target.checked?[...new Set([...selMaps,i])].sort((a,b)=>a-b):selMaps.filter(x=>x!==i);
+  e.target.closest("label").classList.toggle("on",e.target.checked);saveMaps();renderMaps();
+});
+const sfb=document.getElementById("sfbtn");
+let cb=false;try{cb=localStorage.getItem("tfw-cb")==="1"}catch(e){}
+const cbb=document.getElementById("cbbtn");
+const applyCb=()=>{if(cb)document.documentElement.setAttribute("data-cb","1");else document.documentElement.removeAttribute("data-cb");cbb.setAttribute("aria-pressed",String(cb));document.getElementById("cbstate").textContent=cb?"[ ON ]":"[ OFF ]"};
+cbb.addEventListener("click",()=>{cb=!cb;try{localStorage.setItem("tfw-cb",cb?"1":"0")}catch(e){}applyCb()});
+applyCb();
+const applySf=()=>{sfb.setAttribute("aria-pressed",String(sf));document.getElementById("sfstate").textContent=sf?"[ ON ]":"[ OFF ]";document.getElementById("sftitle").textContent=sf?"Spoiler-free mode active":"Spoiler-free mode";document.getElementById("sfsub").textContent=sf?"Quest names, bosses and secret spots are blurred. Tap any blurred name to peek.":"Turn on to blur quest names, bosses and secret spots. Tap any blurred name to peek."};
+sfb.addEventListener("click",()=>{sf=!sf;try{localStorage.setItem("tfw-sf",sf?"1":"0")}catch(e){}applySf();drawProgress();render()});
+const togSpoil=s=>{const on=s.classList.toggle("shown");if(on)s.removeAttribute("aria-label");else s.setAttribute("aria-label","Hidden spoiler, press to reveal")};
+document.addEventListener("click",e=>{const s=e.target.closest(".spoil");if(s){e.preventDefault();e.stopPropagation();togSpoil(s)}},true);
+document.addEventListener("keydown",e=>{const s=e.target.closest&&e.target.closest(".spoil");if(s&&(e.key==="Enter"||e.key===" ")){e.preventDefault();e.stopPropagation();togSpoil(s)}},true);
+applySf();
+let showAllNeed=false;
+const gs=document.getElementById("goalsel");
+gs.addEventListener("change",()=>{goal=gs.value;saveGoal();drawProgress();renderMaps()});
+function setGoal(g){goal=g;saveGoal();drawGoalOptions();gs.value=goal;drawProgress();renderMaps();const m=document.getElementById("mapbox");m.open=true;m.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})}
+document.getElementById("goalres").addEventListener("click",e=>{const b=e.target.closest(".run");if(!b)return;const i=+b.dataset.run;selMaps=[i];saveMaps();drawMapChecks();renderMaps();document.getElementById("mapchecks").scrollIntoView({behavior:"smooth",block:"nearest"})});
+document.getElementById("mapres").addEventListener("click",e=>{if(e.target.id==="needall"){showAllNeed=!showAllNeed;renderMaps()}});
+document.getElementById("ups").addEventListener("click",e=>{const t=e.target.closest(".tgt");if(t){e.preventDefault();setGoal(goal===t.dataset.goal?"":t.dataset.goal);return}});
+document.getElementById("qs").addEventListener("click",e=>{const s=e.target.closest(".chain>summary");if(!s||e.target.closest(".spoil"))return;const d=s.parentElement;ucol[d.dataset.g]=d.open;try{localStorage.setItem("tfw-ucol",JSON.stringify(ucol))}catch(e){}});
+document.getElementById("ups").addEventListener("click",e=>{const s=e.target.closest(".ugrp>summary");if(!s)return;const d=s.parentElement;ucol[d.dataset.g]=d.open;try{localStorage.setItem("tfw-ucol",JSON.stringify(ucol))}catch(e){}});
+const tb=document.getElementById("trapbox");
+try{if(localStorage.getItem("tfw-trapopen")==="0")tb.open=false}catch(e){}
+tb.addEventListener("toggle",()=>{try{localStorage.setItem("tfw-trapopen",tb.open?"1":"0")}catch(e){}});
+const mb=document.getElementById("mapbox");
+try{if(localStorage.getItem("tfw-mapopen")==="1")mb.open=true}catch(e){}
+mb.addEventListener("toggle",()=>{try{localStorage.setItem("tfw-mapopen",mb.open?"1":"0")}catch(e){}});
+drawMapChecks();drawGoalOptions();
+document.querySelector(".progress").addEventListener("change",e=>{
+  const l=e.target.dataset.line;
+  if(l){(LINES[l]||[]).forEach(p=>{if(e.target.checked)done[p]=1;else delete done[p]});save();drawProgress();render();return}
+  const k=e.target.dataset.k;if(!k)return;
+  if(e.target.checked)done[k]=1;else delete done[k];
+  e.target.closest("label").classList.toggle("on",e.target.checked);save();
+  if(COST[k]||(STORY.includes(k)&&LINES[k.replace(/ Pt\.? ?\d+$/,"")].length>1))drawProgress();updTogo();render();
+});
+const ss=document.getElementById("sortsel");ss.value=sortBy;
+ss.addEventListener("change",()=>{sortBy=ss.value;try{localStorage.setItem("tfw-sort",sortBy)}catch(e){}render()});
+const rb=document.getElementById("reset");let rbState="",rbTimer=0,undoDone=null;
+const rbSet=(st,txt)=>{rbState=st;rb.className="reset"+(st?" "+st:"");rb.textContent=txt;clearTimeout(rbTimer)};
+rb.addEventListener("click",()=>{
+  if(rbState==="undo"){done=undoDone||{};undoDone=null;save();drawProgress();render();rbSet("","Clear all ticks");return}
+  if(rbState!=="arm"){if(!Object.keys(done).length)return;rbSet("arm","Tap again to clear everything");rbTimer=setTimeout(()=>rbSet("","Clear all ticks"),4000);return}
+  undoDone=done;done={};save();drawProgress();render();rbSet("undo","Cleared. Tap to undo");rbTimer=setTimeout(()=>{undoDone=null;rbSet("","Clear all ticks")},10000)});
+
+// ---- backup / move progress ----
+const BK_KEYS=["tfw-done","tfw-goal","tfw-maps","tfw-sf","tfw-cb","tfw-sort","tfw-ucol"];
+const bkMsg=(t,bad)=>{const m=document.getElementById("bkmsg");m.textContent=t;m.className="bkmsg"+(bad?" bad":"")};
+const bkCode=()=>{const o={v:1,done,goal,maps:selMaps,sf:sf?1:0,cb:cb?1:0,ucol};return "TFWL1."+btoa(unescape(encodeURIComponent(JSON.stringify(o))))};
+const bkTa=document.getElementById("bkcode");
+document.getElementById("backup").addEventListener("toggle",e=>{if(e.target.open&&!bkTa.value){bkTa.value=bkCode()}});
+document.getElementById("bkcopy").addEventListener("click",async()=>{bkTa.value=bkCode();bkTa.focus();bkTa.select();
+  try{await navigator.clipboard.writeText(bkTa.value);bkMsg("Copied. Paste it somewhere safe or on your other device.")}
+  catch(e){try{document.execCommand("copy")?bkMsg("Copied. Paste it somewhere safe or on your other device."):bkMsg("Code selected. Copy it with your device's copy option.")}catch(_){bkMsg("Code selected. Copy it with your device's copy option.")}}});
+document.getElementById("bkload").addEventListener("click",()=>{
+  const raw=bkTa.value.trim();let o;
+  try{if(!raw.startsWith("TFWL1."))throw 0;o=JSON.parse(decodeURIComponent(escape(atob(raw.slice(6)))));if(!o||o.v!==1||typeof o.done!=="object")throw 0}
+  catch(e){bkMsg("That doesn't look like a Stash Ledger code. Copy the whole thing, starting with TFWL1.",true);return}
+  undoDone=done;
+  done={};Object.keys(o.done||{}).forEach(k=>{if(o.done[k])done[k]=1});
+  selMaps=Array.isArray(o.maps)?o.maps.filter(i=>Number.isInteger(i)&&i>=0&&i<MAPS.length):[];
+  goal=typeof o.goal==="string"?o.goal:"";ucol=o.ucol&&typeof o.ucol==="object"?o.ucol:{};
+  sf=!!o.sf;cb=!!o.cb;
+  try{localStorage.setItem("tfw-done",JSON.stringify(done));localStorage.setItem("tfw-maps",JSON.stringify(selMaps));localStorage.setItem("tfw-goal",goal);localStorage.setItem("tfw-ucol",JSON.stringify(ucol));localStorage.setItem("tfw-sf",sf?"1":"0");localStorage.setItem("tfw-cb",cb?"1":"0")}catch(e){}
+  applySf();applyCb();drawMapChecks();drawProgress();render();
+  const n=Object.keys(done).length;bkMsg(`Loaded ${n} tick${n===1?"":"s"}.`);
+  rbSet("undo","Loaded. Tap to undo");rbTimer=setTimeout(()=>{undoDone=null;rbSet("","Clear all ticks")},10000)});
+
+// ---- start-here popup ----
+const intro=document.getElementById("intro"),isf=document.getElementById("intro-sf"),icb=document.getElementById("intro-cb");
+const introSync=()=>{isf.setAttribute("aria-pressed",String(sf));isf.textContent="Spoiler-free: "+(sf?"on":"off");icb.setAttribute("aria-pressed",String(cb));icb.textContent="Colorblind mode: "+(cb?"on":"off")};
+const openIntro=()=>{introSync();try{intro.showModal()}catch(e){intro.setAttribute("open","")}document.getElementById("intro-go").focus()};
+const closeIntro=()=>{try{localStorage.setItem("tfw-intro","1")}catch(e){}if(intro.open)intro.close()};
+isf.addEventListener("click",()=>{sfb.click();introSync()});
+icb.addEventListener("click",()=>{cbb.click();introSync()});
+document.getElementById("intro-go").addEventListener("click",closeIntro);
+intro.addEventListener("close",()=>{try{localStorage.setItem("tfw-intro","1")}catch(e){}});
+document.getElementById("howbtn").addEventListener("click",openIntro);
+let seen=false;try{seen=localStorage.getItem("tfw-intro")==="1"}catch(e){}
+if(!seen)openIntro();
+q.addEventListener("input",render);
+document.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{filter=c.dataset.f;document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",String(x===c)));render()}));
+drawProgress();render();
+</script>
+</body>
+</html>
