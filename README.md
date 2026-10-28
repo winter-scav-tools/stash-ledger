@@ -2,7 +2,7 @@
 
 A fan-made keep/sell guide for **The Forever Winter**.
 
-Current version: **v0.9.3** · Live page: https://winter-scav-tools.github.io/stash-ledger/
+Current version: **v0.9.4** · Live page: https://winter-scav-tools.github.io/stash-ledger/
 
 - **Keep or sell:** tick the Innards upgrades you've built and the story quests you've finished. Keep counts drop as you go, and items flip to *Sell now* once nothing needs them.
 - **Raid planner:** pick an upgrade or quest as your goal to see what it still needs and which map has the most of it. Enter how many of each item you already have (or tick "got all") and it only counts what's still missing. Or skip the goal and tick maps to browse what's worth grabbing there.
@@ -13,7 +13,18 @@ Current version: **v0.9.3** · Live page: https://winter-scav-tools.github.io/st
 
 Rows marked **?** are unverified. If you check one in-game and it's wrong, open an issue.
 
-Progress is saved in your own browser only. To move it to another device, use *Back up or move progress* in the Innards log.
+Progress is saved in your own browser. To keep it the same on your phone and PC, turn on **Sync** in the Innards log, or use *Back up or move progress* there.
+
+## Sync
+
+Sync is optional and off until you turn it on.
+
+- **No account.** Turning it on gives you a random sync code. Type that code on your other device to connect it. Anyone with the code can see and change your progress, so keep it to yourself.
+- **What's stored:** only your ticks, goal, Have counts and settings, on Cloudflare's free tier. Nothing personal. The server keeps a scrambled (hashed) form of your code, never the code itself, and doesn't keep request logs.
+- **Deleted after 6 months unused:** a save nobody opens or changes for 180 days is removed automatically.
+- **Delete it yourself:** *Delete synced data* in the sync box (tap twice) removes your save right away. Your progress on the device stays.
+
+The server code is in [`sync/`](sync/).
 
 ## Credits
 

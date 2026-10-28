@@ -144,6 +144,14 @@ details#qd .grp{margin-top:8px}
 .backup .bkrow .reset{align-self:auto}
 .bkmsg{font-size:12px;color:var(--frost);min-height:1em}
 .bkmsg.bad{color:var(--amber)}
+#syncbox[hidden]{display:none}
+.syncpill{font-size:11px;color:var(--frost);margin-left:4px}
+.syncpill.bad{color:var(--amber)}
+.synccode{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font:15px/1.3 var(--f-body);letter-spacing:.06em;color:var(--ink);background:var(--bg);border:1px solid var(--rail);padding:8px 10px;word-break:break-all}
+.syncin{width:100%;font:14px var(--f-body);letter-spacing:.06em;text-transform:uppercase;background:var(--bg);color:var(--ink);border:1px solid var(--rail);padding:8px}
+.syncin:focus{border-color:var(--red)}
+.syncfine{font-size:11px;color:var(--dim)}
+.syncclash{border:1px solid var(--amber);padding:10px;display:flex;flex-direction:column;gap:8px;font-size:12px}
 .howbtn{font:18px/1 var(--f-display);letter-spacing:.1em;color:var(--bg);background:var(--red);border:1px solid var(--red);padding:5px 10px;cursor:pointer}
 .howbtn:hover{background:var(--ink);border-color:var(--ink)}
 .hrow .badges{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -383,6 +391,7 @@ footer b{color:var(--ink)}
       <div id="ups" style="display:flex;flex-direction:column;gap:14px"></div>
       <details id="qd"><summary>Story quests done</summary><div class="grp" id="qs"></div></details>
       <button class="reset" id="reset" type="button">Clear all ticks</button>
+      <details class="backup" id="syncbox" hidden><summary>Sync across devices <span class="syncpill" id="syncpill"></span></summary><div class="bk" id="syncbody"></div></details>
       <details class="backup" id="backup"><summary>Back up or move progress</summary><div class="bk">
         <p>Copy this code to keep a backup or to carry your ticks to another device or browser. On the other device, paste it here and press Load.</p>
         <textarea id="bkcode" aria-label="Progress code" spellcheck="false" autocomplete="off"></textarea>
@@ -432,7 +441,7 @@ footer b{color:var(--ink)}
 <footer>
   <span><b>?</b> = unverified. Checked one in-game and it's wrong? <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Found a mistake? Open an issue</a></span>
   <span><b>Unofficial fan-made tool,</b> not affiliated with Fun Dog Studios. Support the devs: <a href="https://store.steampowered.com/app/2828860/The_Forever_Winter/" target="_blank" rel="noopener">Steam</a> · <a href="https://store.epicgames.com/en-US/p/the-forever-winter-8b8280" target="_blank" rel="noopener">Epic Games Store</a> · <a href="https://www.fundogstudios.com/" target="_blank" rel="noopener">fundogstudios.com</a></span>
-  <span>Stash Ledger v0.9.3 · <b>Made by scavs, for scavs,</b> part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · Built with help from Claude (AI), no AI art · Data from <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a> under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026 against game patch <span id="gamepatch">0.9.5.3</span></span>
+  <span>Stash Ledger v0.9.4 · <b>Made by scavs, for scavs,</b> part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · Built with help from Claude (AI), no AI art · Data from <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a> under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026 against game patch <span id="gamepatch">0.9.5.3</span></span>
   <details class="fnotes"><summary>How to read this page</summary>
     <span>Keep counts are exact per upgrade and quest, so they drop as you tick. Crossed-out entries are uses you've finished.</span>
     <span>Ticks are saved in this browser only. To move them to another device, use "Back up or move progress" in the Innards log.</span>
@@ -1063,7 +1072,18 @@ rb.addEventListener("click",()=>{
 // ---- backup / move progress ----
 const BK_KEYS=["tfw-done","tfw-goal","tfw-maps","tfw-sf","tfw-cb","tfw-sort","tfw-ucol"];
 const bkMsg=(t,bad)=>{const m=document.getElementById("bkmsg");m.textContent=t;m.className="bkmsg"+(bad?" bad":"")};
-const bkCode=()=>{const o={v:1,done,goal,maps:selMaps,sf:sf?1:0,cb:cb?1:0,ucol,have};return "TFWL1."+btoa(unescape(encodeURIComponent(JSON.stringify(o))))};
+const getState=()=>({v:1,done,goal,maps:selMaps,sf:sf?1:0,cb:cb?1:0,ucol,have});
+function applyState(o,withUndo){
+  if(withUndo)undoDone=done;
+  done={};Object.keys(o.done||{}).forEach(k=>{if(o.done[k])done[k]=1});
+  selMaps=Array.isArray(o.maps)?o.maps.filter(i=>Number.isInteger(i)&&i>=0&&i<MAPS.length):[];
+  goal=typeof o.goal==="string"?o.goal:"";ucol=o.ucol&&typeof o.ucol==="object"?o.ucol:{};have=o.have&&typeof o.have==="object"?o.have:{};saveHave();
+  sf=!!o.sf;cb=!!o.cb;
+  try{localStorage.setItem("tfw-done",JSON.stringify(done));localStorage.setItem("tfw-maps",JSON.stringify(selMaps));localStorage.setItem("tfw-goal",goal);localStorage.setItem("tfw-ucol",JSON.stringify(ucol));localStorage.setItem("tfw-sf",sf?"1":"0");localStorage.setItem("tfw-cb",cb?"1":"0")}catch(e){}
+  applySf();applyCb();drawMapChecks();drawProgress();render();
+  if(withUndo){rbSet("undo","Loaded. Tap to undo");rbTimer=setTimeout(()=>{undoDone=null;rbSet("","Clear all ticks")},10000)}
+}
+const bkCode=()=>"TFWL1."+btoa(unescape(encodeURIComponent(JSON.stringify(getState()))));
 const bkTa=document.getElementById("bkcode");
 document.getElementById("backup").addEventListener("toggle",e=>{if(e.target.open&&!bkTa.value){bkTa.value=bkCode()}});
 document.getElementById("bkcopy").addEventListener("click",async()=>{bkTa.value=bkCode();bkTa.focus();bkTa.select();
@@ -1073,15 +1093,113 @@ document.getElementById("bkload").addEventListener("click",()=>{
   const raw=bkTa.value.trim();let o;
   try{if(!raw.startsWith("TFWL1."))throw 0;o=JSON.parse(decodeURIComponent(escape(atob(raw.slice(6)))));if(!o||o.v!==1||typeof o.done!=="object")throw 0}
   catch(e){bkMsg("That doesn't look like a Stash Ledger code. Copy the whole thing, starting with TFWL1.",true);return}
-  undoDone=done;
-  done={};Object.keys(o.done||{}).forEach(k=>{if(o.done[k])done[k]=1});
-  selMaps=Array.isArray(o.maps)?o.maps.filter(i=>Number.isInteger(i)&&i>=0&&i<MAPS.length):[];
-  goal=typeof o.goal==="string"?o.goal:"";ucol=o.ucol&&typeof o.ucol==="object"?o.ucol:{};have=o.have&&typeof o.have==="object"?o.have:{};saveHave();
-  sf=!!o.sf;cb=!!o.cb;
-  try{localStorage.setItem("tfw-done",JSON.stringify(done));localStorage.setItem("tfw-maps",JSON.stringify(selMaps));localStorage.setItem("tfw-goal",goal);localStorage.setItem("tfw-ucol",JSON.stringify(ucol));localStorage.setItem("tfw-sf",sf?"1":"0");localStorage.setItem("tfw-cb",cb?"1":"0")}catch(e){}
-  applySf();applyCb();drawMapChecks();drawProgress();render();
-  const n=Object.keys(done).length;bkMsg(`Loaded ${n} tick${n===1?"":"s"}.`);
-  rbSet("undo","Loaded. Tap to undo");rbTimer=setTimeout(()=>{undoDone=null;rbSet("","Clear all ticks")},10000)});
+  applyState(o,true);
+  const n=Object.keys(done).length;bkMsg(`Loaded ${n} tick${n===1?"":"s"}.`)});
+
+// ---- sync across devices (optional, off by default) ----
+// Talks to a tiny Cloudflare Worker (source in /sync of the repo). No accounts: a random sync code is the key.
+// The code stays in this browser and is sent only in a request header to SYNC_API, never in a URL.
+const SYNC_API="https://stash-ledger-sync.winter-scav-tools.workers.dev";   // set to the Worker URL when it's deployed, e.g. https://stash-ledger-sync.<name>.workers.dev
+const SYNC_ORIGINS=["https://winter-scav-tools.github.io"];
+const syncAllowed=!!SYNC_API&&(SYNC_ORIGINS.includes(location.origin)||/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(location.origin));
+const LS=(k,v)=>{try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,String(v))}catch(e){return null}};
+let syncCode=LS("tfw-sync-code")||"",syncRev=+(LS("tfw-sync-rev")||0),syncLast=LS("tfw-sync-last")||"";
+let syncState="idle",syncAt=+(LS("tfw-sync-at")||0),syncBusy=false,syncClash=null,syncLastTry=0,syncShow=false,syncDelArm=0,syncJoin=false,syncErr="";
+const snap=()=>JSON.stringify(getState());
+const dirty=()=>snap()!==syncLast;
+const B32="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+const newCode=()=>{const b=new Uint8Array(20);crypto.getRandomValues(b);const c=[...b].map(x=>B32[x&31]).join("");return c.match(/.{4}/g).join("-")};
+const normCode=t=>{const c=String(t).toUpperCase().replace(/[^A-Z2-7]/g,"");return c.length===20?c.match(/.{4}/g).join("-"):""};
+async function api(method,body,code=syncCode){
+  const r=await fetch(SYNC_API.replace(/\/$/,"")+"/v1/save",{method,cache:"no-store",headers:{"X-Sync-Code":code,"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});
+  let j={};try{j=await r.json()}catch(e){}
+  return {status:r.status,j};
+}
+const markSynced=(rev,at,text)=>{syncRev=rev;syncAt=at||Date.now();syncLast=text;LS("tfw-sync-rev",rev);LS("tfw-sync-at",syncAt);LS("tfw-sync-last",text);syncState="ok"};
+function forgetSync(){syncCode="";syncRev=0;syncLast="";syncAt=0;syncClash=null;["tfw-sync-code","tfw-sync-rev","tfw-sync-last","tfw-sync-at"].forEach(k=>LS(k,null));syncState="idle"}
+async function syncPull(){
+  if(!syncCode||syncBusy)return;syncBusy=true;
+  try{const {status,j}=await api("GET");
+    if(status===200){
+      if(j.rev>syncRev){ if(dirty()&&syncLast){syncClash=j}else{applyState(j.data,false);markSynced(j.rev,j.updated,snap())} }
+      else if(j.rev===syncRev){syncState="ok";syncBusy=false;if(dirty())await syncPush();return}
+    } else if(status===404){syncState="gone"}
+    else syncState="err";
+  }catch(e){syncState="off"}
+  syncBusy=false;drawSync();
+}
+async function syncPush(force){
+  if(!syncCode||syncBusy||(syncClash&&!force))return;
+  const text=snap();if(!force&&text===syncLast)return;
+  syncBusy=true;syncLastTry=Date.now();syncState="busy";drawSync();
+  try{const {status,j}=await api("PUT",{data:JSON.parse(text),baseRev:syncRev});
+    if(status===200||status===201)markSynced(j.rev,j.updated,text);
+    else if(status===409){ if(j.data&&JSON.stringify(j.data)===text)markSynced(j.rev,j.updated,text); else syncClash=j; }
+    else if(status===429)syncState="ok";
+    else if(status===404){syncState="gone"}
+    else syncState="err";
+  }catch(e){syncState="off"}
+  syncBusy=false;drawSync();
+}
+const ago=t=>{if(!t)return "";const m=Math.round((Date.now()-t)/60000);return m<1?"just now":m<60?m+" min ago":m<1440?Math.round(m/60)+" h ago":Math.round(m/1440)+" d ago"};
+function drawSync(){
+  const box=document.getElementById("syncbox");if(!syncAllowed){box.hidden=true;return}
+  box.hidden=false;if(syncClash)box.open=true;
+  const pill=document.getElementById("syncpill"),body=document.getElementById("syncbody");
+  const bad=["off","err","gone"].includes(syncState)||!!syncClash;
+  pill.className="syncpill"+(bad?" bad":"");
+  pill.textContent=!syncCode?"":syncClash?"· needs a choice":syncState==="busy"?"· syncing…":syncState==="off"?"· offline":syncState==="gone"?"· code not found":syncState==="err"?"· problem":"· on";
+  if(body.contains(document.activeElement)&&document.activeElement.id==="syncin")return; // don't redraw under someone typing
+  const fine=`<span class="syncfine">Stored on Cloudflare: only your ticks, goal, Have counts and settings, nothing personal. Saves nobody opens for 6 months are deleted. Turn off and delete whenever you like.</span>`;
+  if(!syncCode){
+    body.innerHTML=`<p>Keep your progress the same on your phone and PC. No account: you get a <b>sync code</b> instead. Anyone with the code can see and change your progress, so keep it to yourself.</p>
+      <div class="bkrow"><button class="reset" id="syncon" type="button">Turn on sync</button><button class="reset" id="syncjoin" type="button">I have a code</button></div>
+      ${syncJoin?`<input class="syncin" id="syncin" autocomplete="off" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" aria-label="Sync code"><div class="bkrow"><button class="reset" id="syncgo" type="button">Connect</button></div><span class="syncfine">Connecting replaces this device's progress with the synced one (you get 10 seconds to undo).</span>`:""}
+      <span class="bkmsg${syncErr?" bad":""}" role="status" aria-live="polite">${esc(syncErr)}</span>${fine}`;
+    return;
+  }
+  const masked=syncCode.replace(/[A-Z2-7]/g,"•");
+  const status=syncClash?"":syncState==="busy"?"Syncing…":syncState==="off"?"Offline. Changes are saved on this device and sync when you're back online.":syncState==="gone"?"This code has no save any more (deleted on another device?).":syncState==="err"?"The sync server had a problem. Your progress is still saved on this device.":`Synced${syncAt?" · "+ago(syncAt):""}`;
+  body.innerHTML=`${syncClash?`<div class="syncclash"><b>Your other device changed things too.</b>Which progress do you want to keep?<div class="bkrow"><button class="reset" id="syncuseother" type="button">Use the other device's</button><button class="reset" id="synckeep" type="button">Keep this device's</button></div></div>`:""}
+    <span class="bkmsg${["off","err","gone"].includes(syncState)?" bad":""}" role="status" aria-live="polite">${esc(status)}</span>
+    <p>Your sync code. Type it on your other device under "I have a code":</p>
+    <span class="synccode"><span id="synctext">${syncShow?syncCode:masked}</span></span>
+    <div class="bkrow"><button class="reset" id="syncshow" type="button">${syncShow?"Hide":"Show"}</button><button class="reset" id="synccopy" type="button">Copy code</button>${syncState==="gone"?`<button class="reset" id="syncreup" type="button">Upload this device's progress</button>`:""}</div>
+    <div class="bkrow"><button class="reset" id="syncoff" type="button">Turn off on this device</button><button class="reset${syncDelArm?" arm":""}" id="syncdel" type="button">${syncDelArm?"Tap again to delete":"Delete synced data"}</button></div>${fine}`;
+}
+document.getElementById("syncbox").addEventListener("click",async e=>{
+  const b=e.target.closest("button");if(!b)return;const id=b.id;syncErr="";
+  if(id==="syncon"){const code=newCode();try{const {status,j}=await api("PUT",{data:getState(),baseRev:0},code);
+      if(status===201){syncCode=code;LS("tfw-sync-code",code);markSynced(j.rev,j.updated,snap());syncShow=true}else syncErr="Couldn't turn on sync right now. Try again later."}
+    catch(_){syncErr="Couldn't reach the sync server. Check your connection."}}
+  else if(id==="syncjoin"){syncJoin=!syncJoin;drawSync();const i=document.getElementById("syncin");if(i)i.focus();return}
+  else if(id==="syncgo"){const code=normCode(document.getElementById("syncin").value);
+    if(!code){syncErr="That isn't a sync code. It has 20 letters and numbers, like ABCD-EFGH-…";}
+    else{try{const {status,j}=await api("GET",null,code);
+        if(status===200){syncCode=code;LS("tfw-sync-code",code);applyState(j.data,true);markSynced(j.rev,j.updated,snap());syncJoin=false}
+        else if(status===404)syncErr="No save found for that code. Check for typos.";else syncErr="Couldn't connect right now. Try again later."}
+      catch(_){syncErr="Couldn't reach the sync server. Check your connection."}}}
+  else if(id==="syncshow"){syncShow=!syncShow}
+  else if(id==="synccopy"){try{await navigator.clipboard.writeText(syncCode);b.textContent="Copied";return}catch(_){syncShow=true}}
+  else if(id==="syncoff"){forgetSync()}
+  else if(id==="syncdel"){
+    if(!syncDelArm){syncDelArm=setTimeout(()=>{syncDelArm=0;drawSync()},4000);drawSync();return}
+    clearTimeout(syncDelArm);syncDelArm=0;try{await api("DELETE")}catch(_){}forgetSync()}
+  else if(id==="syncuseother"&&syncClash){applyState(syncClash.data,true);markSynced(syncClash.rev,syncClash.updated,snap());syncClash=null}
+  else if(id==="synckeep"&&syncClash){syncRev=syncClash.rev;syncClash=null;syncBusy=false;await syncPush(true)}
+  else if(id==="syncreup"){syncRev=0;syncLast="";try{const {status,j}=await api("PUT",{data:getState(),baseRev:0});if(status===201)markSynced(j.rev,j.updated,snap())}catch(_){syncState="off"}}
+  drawSync();
+});
+document.getElementById("syncbox").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="syncin"){e.preventDefault();document.getElementById("syncgo").click()}});
+let lastAgo="";
+if(syncAllowed){
+  drawSync();
+  if(syncCode)syncPull();
+  setInterval(()=>{ if(syncCode&&!syncBusy&&!syncClash&&syncState!=="gone"&&dirty()&&Date.now()-syncLastTry>(syncState==="off"?30000:2500))syncPush();
+    if(syncCode&&syncState==="ok"&&ago(syncAt)!==lastAgo){lastAgo=ago(syncAt);drawSync()} },3000);
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&syncCode)syncPull()});
+  addEventListener("online",()=>{if(syncCode){syncState="ok";syncPull()}});
+}
 
 // ---- start-here popup ----
 const intro=document.getElementById("intro"),isf=document.getElementById("intro-sf"),icb=document.getElementById("intro-cb");
