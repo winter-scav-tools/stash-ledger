@@ -1,0 +1,20 @@
+# Cloudflare Worker config for Stash Ledger sync. No secrets in here:
+# deploy with `npx wrangler login` (browser sign-in), never with a token pasted into a file.
+name = "stash-ledger-sync"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[vars]
+ALLOWED_ORIGINS = "https://winter-scav-tools.github.io"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "stash-ledger-sync"
+database_id = "02f71384-d8ea-4d3d-b8d0-546c1e3b58d5"
+
+[triggers]
+crons = ["17 3 * * *"]   # daily clean-up of saves unused for 180 days
+
+[observability]
+enabled = false          # don't keep request logs
