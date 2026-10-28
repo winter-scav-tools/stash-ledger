@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Fan-made keep/sell guide for The Forever Winter: what to sell, what to keep for Innards upgrades and quests, and what to farm on each map.">
+<meta name="description" content="Fan-made keep/sell guide for The Forever Winter: what to sell, what to keep for Innards upgrades and quests, and what to farm on each map. Works with the Raid Loadout packing tool.">
 <style>
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *,*::before,*::after{box-sizing:border-box}
@@ -344,7 +344,7 @@ footer b{color:var(--ink)}
 <header class="hdr scan">
   <div class="hrow"><span class="eyebrow">&gt; THE FOREVER WINTER · INNARDS STASH GUIDE</span><span class="badges"><button class="howbtn" id="howbtn" type="button" aria-haspopup="dialog">? HOW IT WORKS</button><span class="fanbadge">FAN-MADE · UNOFFICIAL</span></span></div>
   <h1>&gt; STASH LEDGER<span class="blink" aria-hidden="true"></span></h1>
-  <p>One list for the vendor screen. Tick the Innards upgrades you've built and the quests you've finished. Keep counts drop as you go, and items flip to SELL once nothing needs them.</p>
+  <p>One list for the vendor screen. Tick the Innards upgrades you've built and the quests you've finished. Keep counts drop as you go, and items flip to SELL once nothing needs them. Packing for a raid? Set a goal in the raid planner and the <a href="../raid-loadout/">Raid Loadout</a> keeps room for it in your rig.</p>
   <p class="support"><b>SUPPORT THE DEVS</b><span>This is a fan project, not made by Fun Dog Studios. Get the game on</span><a href="https://store.steampowered.com/app/2828860/The_Forever_Winter/" target="_blank" rel="noopener">Steam</a><a href="https://store.epicgames.com/en-US/p/the-forever-winter-8b8280" target="_blank" rel="noopener">Epic Games Store</a><span>·</span><a href="https://www.fundogstudios.com/" target="_blank" rel="noopener">Fun Dog Studios</a></p>
 </header>
 
@@ -441,7 +441,7 @@ footer b{color:var(--ink)}
 <footer>
   <span><b>?</b> = unverified. Checked one in-game and it's wrong? <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Found a mistake? Open an issue</a></span>
   <span><b>Unofficial fan-made tool,</b> not affiliated with Fun Dog Studios. Support the devs: <a href="https://store.steampowered.com/app/2828860/The_Forever_Winter/" target="_blank" rel="noopener">Steam</a> · <a href="https://store.epicgames.com/en-US/p/the-forever-winter-8b8280" target="_blank" rel="noopener">Epic Games Store</a> · <a href="https://www.fundogstudios.com/" target="_blank" rel="noopener">fundogstudios.com</a></span>
-  <span>Stash Ledger v0.9.5 · <b>Made by scavs, for scavs,</b> part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · Packing for a raid? Try the <a href="../loadout/">Raid Loadout</a> · Built with help from Claude (AI), no AI art · Data from <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a> under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026 against game patch <span id="gamepatch">0.9.5.3</span></span>
+  <span>Stash Ledger v1.0 · <b>Made by scavs, for scavs,</b> part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · Packing for a raid? Try the <a href="../raid-loadout/">Raid Loadout</a> · Built with help from Claude (AI), no AI art · Data from <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a> under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026 against game patch <span id="gamepatch">0.9.5.3</span></span>
   <details class="fnotes"><summary>How to read this page</summary>
     <span>Keep counts are exact per upgrade and quest, so they drop as you tick. Crossed-out entries are uses you've finished.</span>
     <span>Ticks are saved in this browser only. To move them to another device, use "Back up or move progress" in the Innards log.</span>
@@ -1072,9 +1072,15 @@ rb.addEventListener("click",()=>{
 // ---- backup / move progress ----
 const BK_KEYS=["tfw-done","tfw-goal","tfw-maps","tfw-sf","tfw-cb","tfw-sort","tfw-ucol"];
 const bkMsg=(t,bad)=>{const m=document.getElementById("bkmsg");m.textContent=t;m.className="bkmsg"+(bad?" bad":"")};
-const getState=()=>({v:1,done,goal,maps:selMaps,sf:sf?1:0,cb:cb?1:0,ucol,have});
+// The Raid Loadout (same site) keeps its plan in tfw-lo-sync. The ledger carries it along as "lo" in backups and sync
+// without reading it; for "lo" the newest "at" always wins, so the two tools never overwrite each other.
+const loLocal=()=>{try{const o=JSON.parse(localStorage.getItem("tfw-lo-sync"));return o&&typeof o==="object"&&!Array.isArray(o)&&Number.isFinite(o.at)?o:null}catch(e){return null}};
+const getState=()=>{const s={v:1,done,goal,maps:selMaps,sf:sf?1:0,cb:cb?1:0,ucol,have},lo=loLocal();if(lo)s.lo=lo;return s};
+const canon=v=>JSON.stringify(v,(k,x)=>x&&typeof x==="object"&&!Array.isArray(x)?Object.keys(x).sort().reduce((a,k2)=>(a[k2]=x[k2],a),{}):x);
+const ledgerPart=t=>{try{const o=typeof t==="string"?JSON.parse(t):{...t};delete o.lo;return canon(o)}catch(e){return String(t)}};
 function applyState(o,withUndo){
   if(withUndo)undoDone=done;
+  {const r=o.lo,l=loLocal();if(r&&typeof r==="object"&&!Array.isArray(r)&&Number.isFinite(r.at)&&(!l||r.at>=l.at))try{localStorage.setItem("tfw-lo-sync",JSON.stringify(r))}catch(e){}}
   done={};Object.keys(o.done||{}).forEach(k=>{if(o.done[k])done[k]=1});
   selMaps=Array.isArray(o.maps)?o.maps.filter(i=>Number.isInteger(i)&&i>=0&&i<MAPS.length):[];
   goal=typeof o.goal==="string"?o.goal:"";ucol=o.ucol&&typeof o.ucol==="object"?o.ucol:{};have=o.have&&typeof o.have==="object"?o.have:{};saveHave();
@@ -1106,7 +1112,7 @@ const LS=(k,v)=>{try{if(v===undefined)return localStorage.getItem(k);if(v===null
 let syncCode=LS("tfw-sync-code")||"",syncRev=+(LS("tfw-sync-rev")||0),syncLast=LS("tfw-sync-last")||"";
 let syncState="idle",syncAt=+(LS("tfw-sync-at")||0),syncBusy=false,syncClash=null,syncLastTry=0,syncShow=false,syncDelArm=0,syncJoin=false,syncErr="";
 const snap=()=>JSON.stringify(getState());
-const dirty=()=>snap()!==syncLast;
+const dirty=()=>{try{return canon(getState())!==canon(JSON.parse(syncLast||"null"))}catch(e){return true}};
 const B32="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 const newCode=()=>{const b=new Uint8Array(20);crypto.getRandomValues(b);const c=[...b].map(x=>B32[x&31]).join("");return c.match(/.{4}/g).join("-")};
 const normCode=t=>{const c=String(t).toUpperCase().replace(/[^A-Z2-7]/g,"");return c.length===20?c.match(/.{4}/g).join("-"):""};
@@ -1115,13 +1121,14 @@ async function api(method,body,code=syncCode){
   let j={};try{j=await r.json()}catch(e){}
   return {status:r.status,j};
 }
+const applyLo=r=>{const l=loLocal();if(r&&typeof r==="object"&&Number.isFinite(r.at)&&(!l||r.at>l.at))try{localStorage.setItem("tfw-lo-sync",JSON.stringify(r))}catch(e){}};
 const markSynced=(rev,at,text)=>{syncRev=rev;syncAt=at||Date.now();syncLast=text;LS("tfw-sync-rev",rev);LS("tfw-sync-at",syncAt);LS("tfw-sync-last",text);syncState="ok"};
 function forgetSync(){syncCode="";syncRev=0;syncLast="";syncAt=0;syncClash=null;["tfw-sync-code","tfw-sync-rev","tfw-sync-last","tfw-sync-at"].forEach(k=>LS(k,null));syncState="idle"}
 async function syncPull(){
   if(!syncCode||syncBusy)return;syncBusy=true;
   try{const {status,j}=await api("GET");
     if(status===200){
-      if(j.rev>syncRev){ if(dirty()&&syncLast){syncClash=j}else{applyState(j.data,false);markSynced(j.rev,j.updated,snap())} }
+      if(j.rev>syncRev){ if(syncLast&&ledgerPart(snap())!==ledgerPart(syncLast)){syncClash=j}else{applyState(j.data,false);markSynced(j.rev,j.updated,JSON.stringify(j.data))} }
       else if(j.rev===syncRev){syncState="ok";syncBusy=false;if(dirty())await syncPush();return}
     } else if(status===404){syncState="gone"}
     else syncState="err";
@@ -1130,11 +1137,13 @@ async function syncPull(){
 }
 async function syncPush(force){
   if(!syncCode||syncBusy||(syncClash&&!force))return;
-  const text=snap();if(!force&&text===syncLast)return;
+  const text=snap();if(!force&&!dirty())return;
   syncBusy=true;syncLastTry=Date.now();syncState="busy";drawSync();
   try{const {status,j}=await api("PUT",{data:JSON.parse(text),baseRev:syncRev});
     if(status===200||status===201)markSynced(j.rev,j.updated,text);
-    else if(status===409){ if(j.data&&JSON.stringify(j.data)===text)markSynced(j.rev,j.updated,text); else syncClash=j; }
+    else if(status===409){ if(j.data&&canon(j.data)===canon(JSON.parse(text)))markSynced(j.rev,j.updated,text);
+      else if(j.data&&ledgerPart(j.data)===ledgerPart(syncLast)){applyLo(j.data.lo);markSynced(j.rev,j.updated,JSON.stringify(j.data))}
+      else syncClash=j; }
     else if(status===429)syncState="ok";
     else if(status===404){syncState="gone"}
     else syncState="err";
@@ -1150,7 +1159,7 @@ function drawSync(){
   pill.className="syncpill"+(bad?" bad":"");
   pill.textContent=!syncCode?"":syncClash?"· needs a choice":syncState==="busy"?"· syncing…":syncState==="off"?"· offline":syncState==="gone"?"· code not found":syncState==="err"?"· problem":"· on";
   if(body.contains(document.activeElement)&&document.activeElement.id==="syncin")return; // don't redraw under someone typing
-  const fine=`<span class="syncfine">Stored on Cloudflare: only your ticks, goal, Have counts and settings, nothing personal. Saves nobody opens for 6 months are deleted. Turn off and delete whenever you like.</span>`;
+  const fine=`<span class="syncfine">Stored on Cloudflare: only your ticks, goal, Have counts and settings, plus your Raid Loadout plan if you use it. Nothing personal. Saves nobody opens for 6 months are deleted. Turn off and delete whenever you like.</span>`;
   if(!syncCode){
     body.innerHTML=`<p>Keep your progress the same on your phone and PC. No account: you get a <b>sync code</b> instead. Anyone with the code can see and change your progress, so keep it to yourself.</p>
       <div class="bkrow"><button class="reset" id="syncon" type="button">Turn on sync</button><button class="reset" id="syncjoin" type="button">I have a code</button></div>
