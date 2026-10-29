@@ -316,9 +316,23 @@ td.for .rp{color:var(--frost)}
 footer{color:var(--muted);font-size:12px;display:flex;flex-direction:column;gap:6px;max-width:80ch;border-top:1px solid var(--line);padding-top:16px}
 footer b{color:var(--ink)}
 td.name{position:relative;padding-left:74px!important;height:60px}
-.ic{position:absolute;left:14px;top:6px;width:48px;height:48px;object-fit:contain}
+/* icon "slot": a lighter tile like an inventory cell, so dark icons don't vanish on the dark page */
+.icb{position:absolute;left:14px;top:6px;width:48px;height:48px;padding:3px;border:1px solid var(--rail);border-radius:3px;background:radial-gradient(circle at 50% 42%,#3a4649 0%,#232c2e 62%,#192022 100%);cursor:zoom-in;display:grid;place-items:center}
+.icb:hover,.icb:focus-visible{border-color:var(--ink)}
+.ic{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 1px rgba(223,228,226,.45)) drop-shadow(0 1px 2px rgba(0,0,0,.6))}
 .ic.icsp{filter:blur(8px) grayscale(1)}
-@media (max-width:600px){td.name{padding-left:58px!important;height:56px}.ic{left:8px;top:8px;width:40px;height:40px}.mainlist td.name{padding-left:14px!important;height:auto}.mainlist .ic{display:none}}
+@media (max-width:600px){td.name{padding-left:58px!important;height:56px}.icb{left:8px;top:8px;width:40px;height:40px;padding:2px}.mainlist td.name{padding-left:14px!important;height:auto}.mainlist .icb{display:none}}
+dialog#insp{width:min(380px,calc(100% - 32px));padding:0;border:2px solid var(--rail);background:var(--panel);color:var(--ink)}
+dialog#insp::backdrop{background:rgba(5,8,9,.82)}
+.insp{display:flex;flex-direction:column;gap:12px;padding:18px;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px)}
+.insp .ihead{display:flex;justify-content:space-between;align-items:center;font:20px/1 var(--f-display);letter-spacing:.08em;color:var(--dim)}
+.insp .ihead button{font:20px/1 var(--f-display);background:none;border:1px solid var(--rail);color:var(--ink);padding:4px 10px;cursor:pointer}
+.insp .ibig{aspect-ratio:1;width:100%;max-width:300px;align-self:center;display:grid;place-items:center;border:1px solid var(--rail);background:radial-gradient(circle at 50% 42%,#3d494c 0%,#232c2e 60%,#161d1f 100%)}
+.insp .ibig img{width:84%;height:84%;object-fit:contain;filter:drop-shadow(0 0 2px rgba(223,228,226,.35)) drop-shadow(0 4px 10px rgba(0,0,0,.7));cursor:default}
+.insp .ibig img.icsp{filter:blur(14px) grayscale(1);cursor:pointer}
+.insp h3{margin:0;font:400 30px/1.05 var(--f-display);letter-spacing:.03em;color:var(--ink)}
+.insp .irow{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:13px;color:var(--muted)}
+.insp .icred{font-size:11px;color:var(--dim)}
 .fnotes{display:flex;flex-direction:column;gap:6px}
 footer:has(.fmeta){max-width:118ch}
 .fmeta{display:grid;grid-template-columns:max-content 1fr;gap:5px 16px;margin:0}
@@ -350,6 +364,7 @@ footer:has(.fmeta){max-width:118ch}
     <p class="fine">Reopen this any time with "? How it works" at the top. Fan-made and unofficial, built with help from AI (no AI art).</p>
   </div>
 </dialog>
+<dialog id="insp" aria-labelledby="insp-h"><div class="insp" id="inspbody"></div></dialog>
 <header class="hdr scan">
   <div class="hrow"><span class="eyebrow">&gt; THE FOREVER WINTER · INNARDS STASH GUIDE</span><span class="badges"><button class="howbtn" id="howbtn" type="button" aria-haspopup="dialog">? HOW IT WORKS</button><span class="fanbadge">FAN-MADE · UNOFFICIAL</span></span></div>
   <h1>&gt; STASH LEDGER<span class="blink" aria-hidden="true"></span></h1>
@@ -449,7 +464,7 @@ footer:has(.fmeta){max-width:118ch}
 
 <footer>
   <dl class="fmeta">
-    <dt>Version</dt><dd>Stash Ledger v1.03 · <b>Made by scavs, for scavs</b> · part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · packing for a raid? Try <a href="../raid-loadout/">Raid Loadout</a></dd>
+    <dt>Version</dt><dd>Stash Ledger v1.04 · <b>Made by scavs, for scavs</b> · part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · packing for a raid? Try <a href="../raid-loadout/">Raid Loadout</a></dd>
     <dt>Mistakes</dt><dd><b>?</b> = unverified · <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Spotted one? Open an issue</a></dd>
     <dt>License</dt><dd>Code: <a href="https://github.com/winter-scav-tools/stash-ledger/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0</a> · Data: <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026 (game patch <span id="gamepatch">0.9.5.3</span>)</dd>
     <dt>Icons</dt><dd>© Fun Dog Studios, used with their permission. <b>Not covered by the GPL</b>: don't reuse them.</dd>
@@ -860,7 +875,7 @@ const spq=s=>sf?spl(esc(s)):esc(s);
 // Item icons: (c) Fun Dog Studios, used with their permission (Oct 2026). Not covered by the GPL.
 const ICON_BASE=location.hostname==="winter-scav-tools.github.io"?"icons/":"https://winter-scav-tools.github.io/stash-ledger/icons/";
 const slug=n=>n.toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-const ic=n=>`<img class="ic${sf&&sp(n)!==esc(n)?" icsp":""}" src="${ICON_BASE}${slug(n)}.png" alt="" loading="lazy" decoding="async" width="32" height="32" onerror="this.remove()">`;
+const ic=n=>`<button type="button" class="icb" data-insp="${esc(n)}" aria-label="Inspect ${sf&&sp(n)!==esc(n)?"item":esc(n)}"><img class="ic${sf&&sp(n)!==esc(n)?" icsp":""}" src="${ICON_BASE}${slug(n)}.png" alt="" loading="lazy" decoding="async" width="48" height="48" onerror="this.parentNode.remove()"></button>`;
 const box=(name,extra="",quest=false)=>{const id="c"+(uid++);return `<label class="${done[name]?"on":""}" for="${id}"><input type="checkbox" id="${id}" data-k="${esc(name)}" ${done[name]?"checked":""}><span class="t">${quest?spq(name):esc(name)}</span>${extra}</label>`};
 let goal="";try{goal=localStorage.getItem("tfw-goal")||""}catch(e){}
 // what you already have for each goal: {goalKey:{item:count}}
@@ -902,6 +917,24 @@ function drawProgress(){
 }
 function updTogo(){drawGoalOptions();const left=Object.keys(COST).filter(u=>!done[u]).reduce((s,u)=>s+COST[u][0],0);
   document.getElementById("togo").textContent=left?kfmt(left)+" credits left to build everything":"Everything built";}
+function openInspect(n){
+  const it=ITEMS.find(x=>x.n===n);if(!it)return;
+  const d=document.getElementById("insp"),hid=sf&&sp(n)!==esc(n),v=verdict(it),per=ps(it);
+  document.getElementById("inspbody").innerHTML=`<div class="ihead"><span>&gt; INSPECT</span><button type="button" id="inspx" aria-label="Close">CLOSE ✕</button></div>
+    <div class="ibig"><img class="${hid?"icsp":""}" src="${ICON_BASE}lg/${slug(n)}.png" alt="${hid?"Hidden spoiler item":esc(n)}" ${hid?'title="Spoiler: tap to reveal"':""} onerror="if(!this.dataset.f){this.dataset.f=1;this.src='${ICON_BASE}${slug(n)}.png'}else{this.parentNode.remove()}"></div>
+    <h3 id="insp-h">${sp(n)}</h3>
+    <div class="irow"><span class="tag ${v.cls}">${v.lab}</span>${it.v?`<span>Sells for <b>${it.v.toLocaleString("en-US")}</b></span>`:""}${per>0?`<span>${Math.round(per).toLocaleString("en-US")} per space</span>`:""}</div>
+    ${it.note?`<div class="irow">${esc(it.note)}</div>`:""}
+    <span class="icred">Item art © Fun Dog Studios, used with their permission.</span>`;
+  try{d.showModal()}catch(e){d.setAttribute("open","")}
+  document.getElementById("inspx").focus();
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest&&e.target.closest(".icb");if(b){e.preventDefault();e.stopPropagation();openInspect(b.dataset.insp);return}
+  const d=document.getElementById("insp");if(!d.open)return;
+  if(e.target.id==="inspx"||e.target===d){d.close();return}
+  const im=e.target.closest(".ibig img.icsp");if(im)im.classList.remove("icsp");
+});
 function verdict(it){
   const ups=Object.entries(it.b), story=it.q.filter(x=>!x[2]), rep=it.q.filter(x=>x[2]);
   let rem=0; ups.forEach(([u,a])=>{if(!done[u])rem+=a}); story.forEach(([s,a])=>{if(!done[s])rem+=a});
