@@ -320,6 +320,11 @@ td.name{position:relative;padding-left:74px!important;height:60px}
 .ic.icsp{filter:blur(8px) grayscale(1)}
 @media (max-width:600px){td.name{padding-left:58px!important;height:56px}.ic{left:8px;top:8px;width:40px;height:40px}.mainlist td.name{padding-left:14px!important;height:auto}.mainlist .ic{display:none}}
 .fnotes{display:flex;flex-direction:column;gap:6px}
+footer:has(.fmeta){max-width:118ch}
+.fmeta{display:grid;grid-template-columns:max-content 1fr;gap:5px 16px;margin:0}
+.fmeta dt{font:16px/1.25 var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.fmeta dd{margin:0;line-height:1.5;color:var(--muted)}
+@media (max-width:480px){.fmeta{grid-template-columns:1fr;gap:0}.fmeta dt{margin-top:8px}.fmeta dt:first-child{margin-top:0}}
 .fnotes>summary{cursor:pointer;color:var(--ink);width:max-content}
 .fnotes[open]{display:flex}
 .fnotes>span{display:block;margin-top:6px}
@@ -443,14 +448,19 @@ td.name{position:relative;padding-left:74px!important;height:60px}
 </nav>
 
 <footer>
-  <span><b>?</b> = unverified. Checked one in-game and it's wrong? <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Found a mistake? Open an issue</a></span>
-  <span><b>Unofficial fan-made tool,</b> not affiliated with Fun Dog Studios. Support the devs: <a href="https://store.steampowered.com/app/2828860/The_Forever_Winter/" target="_blank" rel="noopener">Steam</a> · <a href="https://store.epicgames.com/en-US/p/the-forever-winter-8b8280" target="_blank" rel="noopener">Epic Games Store</a> · <a href="https://www.fundogstudios.com/" target="_blank" rel="noopener">fundogstudios.com</a></span>
-  <span>Stash Ledger v1.02 · <b>Made by scavs, for scavs,</b> part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · Packing for a raid? Try the <a href="../raid-loadout/">Raid Loadout</a> · Built with help from Claude (AI), no AI art · Item icons © Fun Dog Studios, used with their permission · Data from <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a> under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026 against game patch <span id="gamepatch">0.9.5.3</span></span>
+  <dl class="fmeta">
+    <dt>Version</dt><dd>Stash Ledger v1.03 · <b>Made by scavs, for scavs</b> · part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · packing for a raid? Try <a href="../raid-loadout/">Raid Loadout</a></dd>
+    <dt>Mistakes</dt><dd><b>?</b> = unverified · <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Spotted one? Open an issue</a></dd>
+    <dt>License</dt><dd>Code: <a href="https://github.com/winter-scav-tools/stash-ledger/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0</a> · Data: <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026 (game patch <span id="gamepatch">0.9.5.3</span>)</dd>
+    <dt>Icons</dt><dd>© Fun Dog Studios, used with their permission. <b>Not covered by the GPL</b>: don't reuse them.</dd>
+    <dt>Made</dt><dd>With help from Claude (AI) · no AI art</dd>
+    <dt>Support</dt><dd><b>Unofficial fan-made tool</b>, not affiliated with Fun Dog Studios. Get the game: <a href="https://store.steampowered.com/app/2828860/The_Forever_Winter/" target="_blank" rel="noopener">Steam</a> · <a href="https://store.epicgames.com/en-US/p/the-forever-winter-8b8280" target="_blank" rel="noopener">Epic Games Store</a> · <a href="https://www.fundogstudios.com/" target="_blank" rel="noopener">fundogstudios.com</a></dd>
+  </dl>
   <details class="fnotes"><summary>How to read this page</summary>
     <span>Keep counts are exact per upgrade and quest, so they drop as you tick. Crossed-out entries are uses you've finished.</span>
-    <span>Ticks are saved in this browser only. To move them to another device, use "Back up or move progress" in the Innards log.</span>
+    <span>Ticks are saved in this browser. To use them on another device, turn on "Sync across devices" or use "Back up or move progress" in the Innards log.</span>
     <span>Per space is credits per unit of rig space, for deciding what to drop when your rig is full. Large-bin items have their own slot.</span>
-    <span>Not listed: weapons, ammo, gun attachments (sell any you don't run), and your own kit like med kits, grenades, turrets and rig lights.</span>
+    <span>Not listed: weapons, ammo, gun attachments (sell any you don't run; Raid Loadout covers them), and your own kit like med kits, grenades, turrets and rig lights.</span>
     <span>Prices can drift after patches, so trust the in-game vendor number.</span>
   </details>
 </footer>
