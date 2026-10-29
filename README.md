@@ -2,7 +2,7 @@
 
 A fan-made keep/sell guide for **The Forever Winter**.
 
-Current version: **v1.04** · Live page: https://winter-scav-tools.github.io/stash-ledger/
+Current version: **v1.05** · Live page: https://winter-scav-tools.github.io/stash-ledger/
 
 - **Keep or sell:** tick the Innards upgrades you've built and the story quests you've finished. Keep counts drop as you go, and items flip to *Sell now* once nothing needs them.
 - **Raid planner:** pick an upgrade or quest as your goal to see what it still needs and which map has the most of it. Enter how many of each item you already have (or tick "got all") and it only counts what's still missing. Or skip the goal and tick maps to browse what's worth grabbing there.
