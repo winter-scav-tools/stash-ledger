@@ -315,6 +315,10 @@ td.for .rp{color:var(--frost)}
 }
 footer{color:var(--muted);font-size:12px;display:flex;flex-direction:column;gap:6px;max-width:80ch;border-top:1px solid var(--line);padding-top:16px}
 footer b{color:var(--ink)}
+td.name{position:relative;padding-left:58px!important}
+.ic{position:absolute;left:14px;top:10px;width:32px;height:32px;object-fit:contain}
+.ic.icsp{filter:blur(6px) grayscale(1)}
+@media (max-width:600px){td.name{padding-left:40px!important}.ic{left:8px;top:11px;width:24px;height:24px}.mainlist td.name{padding-left:14px!important}.mainlist .ic{display:none}}
 .fnotes{display:flex;flex-direction:column;gap:6px}
 .fnotes>summary{cursor:pointer;color:var(--ink);width:max-content}
 .fnotes[open]{display:flex}
@@ -413,7 +417,7 @@ footer b{color:var(--ink)}
         <span class="count" id="count" role="status" aria-live="polite"></span>
       </div>
       <div class="table-box">
-        <table>
+        <table class="mainlist">
           <thead><tr><th>Item</th><th>Verdict</th><th>Keep</th><th class="r">Sells</th><th class="r" title="Credits per unit of rig space">Per space</th><th>Still needed for · repeats · crafts</th></tr></thead>
           <tbody id="rows"></tbody>
         </table>
@@ -441,7 +445,7 @@ footer b{color:var(--ink)}
 <footer>
   <span><b>?</b> = unverified. Checked one in-game and it's wrong? <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Found a mistake? Open an issue</a></span>
   <span><b>Unofficial fan-made tool,</b> not affiliated with Fun Dog Studios. Support the devs: <a href="https://store.steampowered.com/app/2828860/The_Forever_Winter/" target="_blank" rel="noopener">Steam</a> · <a href="https://store.epicgames.com/en-US/p/the-forever-winter-8b8280" target="_blank" rel="noopener">Epic Games Store</a> · <a href="https://www.fundogstudios.com/" target="_blank" rel="noopener">fundogstudios.com</a></span>
-  <span>Stash Ledger v1.0 · <b>Made by scavs, for scavs,</b> part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · Packing for a raid? Try the <a href="../raid-loadout/">Raid Loadout</a> · Built with help from Claude (AI), no AI art · Data from <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a> under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026 against game patch <span id="gamepatch">0.9.5.3</span></span>
+  <span>Stash Ledger v1.01 · <b>Made by scavs, for scavs,</b> part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · Packing for a raid? Try the <a href="../raid-loadout/">Raid Loadout</a> · Built with help from Claude (AI), no AI art · Item icons © Fun Dog Studios, used with their permission · Data from <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a> under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026 against game patch <span id="gamepatch">0.9.5.3</span></span>
   <details class="fnotes"><summary>How to read this page</summary>
     <span>Keep counts are exact per upgrade and quest, so they drop as you tick. Crossed-out entries are uses you've finished.</span>
     <span>Ticks are saved in this browser only. To move them to another device, use "Back up or move progress" in the Innards log.</span>
@@ -843,6 +847,10 @@ const BOSS=/(Alcohol Vault|inside the Titan|Drone Courier[^,;]*|AA Gun Supplies|
 const spl=t=>`<span class="spoil" tabindex="0" role="button" aria-label="Hidden spoiler, press to reveal" title="Spoiler: tap to reveal">${t}</span>`;
 const sp=s=>{const e=esc(s);return sf?e.replace(BOSS,spl):e};
 const spq=s=>sf?spl(esc(s)):esc(s);
+// Item icons: (c) Fun Dog Studios, used with their permission (Oct 2026). Not covered by the GPL.
+const ICON_BASE=location.hostname==="winter-scav-tools.github.io"?"icons/":"https://winter-scav-tools.github.io/stash-ledger/icons/";
+const slug=n=>n.toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const ic=n=>`<img class="ic${sf&&sp(n)!==esc(n)?" icsp":""}" src="${ICON_BASE}${slug(n)}.png" alt="" loading="lazy" decoding="async" width="32" height="32" onerror="this.remove()">`;
 const box=(name,extra="",quest=false)=>{const id="c"+(uid++);return `<label class="${done[name]?"on":""}" for="${id}"><input type="checkbox" id="${id}" data-k="${esc(name)}" ${done[name]?"checked":""}><span class="t">${quest?spq(name):esc(name)}</span>${extra}</label>`};
 let goal="";try{goal=localStorage.getItem("tfw-goal")||""}catch(e){}
 // what you already have for each goal: {goalKey:{item:count}}
@@ -927,7 +935,7 @@ function render(){
     it.q.filter(x=>x[2]).forEach(([s,a])=>parts.push(`<span class="rp">↻ ${spq(s)} ×${a}</span>`));
     let txt=parts.join(", ");
     if(it.c.length) txt+=(txt?" · ":"")+"<em>crafts</em> "+it.c.map(esc).join(", ");
-    html+=`<tr><td class="name">${sp(it.n)}${uMark(it)}${it.note?`<small>${esc(it.note)}</small>`:""}${barLine(it)}${dogLine(it)}${uLine(it)}</td><td><span class="tag ${v.cls}">${v.lab}</span></td><td class="qty">${v.qty}</td><td class="val">${fmt(it.v)}</td><td class="val">${perSpace(it)}</td><td class="for">${txt||"—"}</td></tr>`;
+    html+=`<tr><td class="name">${ic(it.n)}${sp(it.n)}${uMark(it)}${it.note?`<small>${esc(it.note)}</small>`:""}${barLine(it)}${dogLine(it)}${uLine(it)}</td><td><span class="tag ${v.cls}">${v.lab}</span></td><td class="qty">${v.qty}</td><td class="val">${fmt(it.v)}</td><td class="val">${perSpace(it)}</td><td class="for">${txt||"—"}</td></tr>`;
   });
   document.getElementById("rows").innerHTML=html;
   document.getElementById("empty").hidden=n>0;
@@ -981,7 +989,7 @@ function goalRow({it,need,got,left}){
   else maps=esc(it.note||"no spawn data");
   const id="h"+(uid++),n=esc(it.n);
   const qty=got&&left?`${left} <span class="of">left of ${need}</span>`:`×${need}`;
-  return `<tr class="${left?"":"gotrow"}"><td class="name">${sp(it.n)}${uMark(it)}</td><td class="qty">${qty}</td><td class="have"><span class="havebox"><input type="number" inputmode="numeric" min="0" max="${need}" step="1" value="${got||""}" placeholder="0" data-have="${n}" data-need="${need}" aria-label="How many ${n} you have"><span class="of">/ ${need}</span><label class="gotall" for="${id}"><input type="checkbox" id="${id}" data-gotall="${n}" data-need="${need}" ${left?"":"checked"}><span>got all</span></label></span></td><td class="maps">${maps}</td></tr>`;
+  return `<tr class="${left?"":"gotrow"}"><td class="name">${ic(it.n)}${sp(it.n)}${uMark(it)}</td><td class="qty">${qty}</td><td class="have"><span class="havebox"><input type="number" inputmode="numeric" min="0" max="${need}" step="1" value="${got||""}" placeholder="0" data-have="${n}" data-need="${need}" aria-label="How many ${n} you have"><span class="of">/ ${need}</span><label class="gotall" for="${id}"><input type="checkbox" id="${id}" data-gotall="${n}" data-need="${need}" ${left?"":"checked"}><span>got all</span></label></span></td><td class="maps">${maps}</td></tr>`;
 }
 function renderMaps(){
   const box=document.getElementById("mapres"),sum=document.getElementById("mapsum");
@@ -1009,8 +1017,8 @@ function renderMaps(){
   const tag=r=>(r.goal?`<span class="badge goal">goal</span>`:"")+(r.spots<=3?`<span class="badge">only ${r.spots===1?"here":"a few maps"}</span>`:r.bestHere?`<span class="badge">best map</span>`:"")+(r.q?`<span class="badge q">quest active</span>`:"");
   const best=r=>r.bestMaps.length&&r.bestMaps.length<=3?"best on "+r.bestMaps.map(i=>MAPS[i]).join(", "):"";
   const shown=showAllNeed?need:need.slice(0,30);
-  const needRows=shown.map(r=>`<tr><td class="name">${sp(r.it.n)}${uMark(r.it)}${tag(r)}<small>${[r.wt,best(r)].filter(Boolean).map(sp).join(" · ")}</small></td><td><span class="tag ${r.v.cls}">${r.v.lab}</span></td><td class="qty">${r.v.qty}</td></tr>`).join("");
-  const sellRows=sell.slice(0,25).map(r=>`<tr><td class="name">${sp(r.it.n)}${uMark(r.it)}${tag(r)}<small>${sp(r.wt)}${r.it.note?" · "+esc(r.it.note):""}${sortBy==="space"&&ps(r.it)>0?" · "+fmt(Math.round(ps(r.it)))+" per space":""}</small></td><td class="val">${fmt(r.it.v)}</td></tr>`).join("");
+  const needRows=shown.map(r=>`<tr><td class="name">${ic(r.it.n)}${sp(r.it.n)}${uMark(r.it)}${tag(r)}<small>${[r.wt,best(r)].filter(Boolean).map(sp).join(" · ")}</small></td><td><span class="tag ${r.v.cls}">${r.v.lab}</span></td><td class="qty">${r.v.qty}</td></tr>`).join("");
+  const sellRows=sell.slice(0,25).map(r=>`<tr><td class="name">${ic(r.it.n)}${sp(r.it.n)}${uMark(r.it)}${tag(r)}<small>${sp(r.wt)}${r.it.note?" · "+esc(r.it.note):""}${sortBy==="space"&&ps(r.it)>0?" · "+fmt(Math.round(ps(r.it)))+" per space":""}</small></td><td class="val">${fmt(r.it.v)}</td></tr>`).join("");
   box.innerHTML=`<div style="min-width:0"><h3>Still needed · ${need.length}</h3><div class="table-box"><table><thead><tr><th>Item</th><th>Verdict</th><th>Keep</th></tr></thead><tbody>${needRows||`<tr><td colspan="3" class="empty">Nothing left to collect here.</td></tr>`}</tbody></table></div>${need.length>30?`<button class="reset" id="needall" type="button" style="margin-top:8px">${showAllNeed?"Show the top 30":"Show all "+need.length}</button>`:""}</div>
   <div style="min-width:0"><h3>Best to sell here</h3><div class="table-box"><table><thead><tr><th>Item</th><th class="r">Sells</th></tr></thead><tbody>${sellRows||`<tr><td colspan="2" class="empty">No sellables listed for these maps.</td></tr>`}</tbody></table></div></div>`;
 }
