@@ -464,7 +464,7 @@ footer:has(.fmeta){max-width:118ch}
 
 <footer>
   <dl class="fmeta">
-    <dt>Version</dt><dd>Stash Ledger v1.05 · <b>Made by scavs, for scavs</b> · part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · packing for a raid? Try <a href="../raid-loadout/">Raid Loadout</a></dd>
+    <dt>Version</dt><dd>Stash Ledger v1.06 · <b>Made by scavs, for scavs</b> · part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · packing for a raid? Try <a href="../raid-loadout/">Raid Loadout</a></dd>
     <dt>Mistakes</dt><dd><b>?</b> = unverified · <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Spotted one? Open an issue</a></dd>
     <dt>License</dt><dd>Code: <a href="https://github.com/winter-scav-tools/stash-ledger/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0</a> · Data: <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026 (game patch <span id="gamepatch">0.9.5.3</span>)</dd>
     <dt>Icons</dt><dd>© Fun Dog Studios, used with their permission. <b>Not covered by the GPL</b>: don't reuse them.</dd>
@@ -873,6 +873,12 @@ const BOSS=/(Alcohol Vault|inside the Titan|Drone Courier[^,;]*|AA Gun Supplies|
 const spl=t=>`<span class="spoil" tabindex="0" role="button" aria-label="Hidden spoiler, press to reveal" title="Spoiler: tap to reveal">${t}</span>`;
 const sp=s=>{const e=esc(s);return sf?e.replace(BOSS,spl):e};
 const spq=s=>sf?spl(esc(s)):esc(s);
+// Free text (notes, "?" reasons) can mention quests by name. In spoiler-free mode blur every known quest name
+// and boss name inside it, not just the boss list. Upgrade and item names are left alone.
+const QNAMES=(()=>{const ups=new Set(GROUPS.flatMap(g=>g[1])),its=new Set(ITEMS.map(i=>i.n));
+  return [...new Set([...STORY,...ITEMS.flatMap(i=>i.q.map(x=>x[0])),"Tech Theft Prevention"])].filter(q=>!ups.has(q)&&!its.has(q)&&q.length>3).sort((a,b)=>b.length-a.length)})();
+const SPT_RE=new RegExp(QNAMES.map(q=>esc(q).replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+"|"+BOSS.source,"g");
+const spt=s=>{const e=esc(s);return sf?e.replace(SPT_RE,spl):e};
 // Item icons: (c) Fun Dog Studios, used with their permission (Oct 2026). Not covered by the GPL.
 const ICON_BASE=location.hostname==="winter-scav-tools.github.io"?"icons/":"https://winter-scav-tools.github.io/stash-ledger/icons/";
 const slug=n=>n.toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
@@ -925,7 +931,7 @@ function openInspect(n){
     <div class="ibig"><img class="${hid?"icsp":""}" src="${ICON_BASE}lg/${slug(n)}.png" alt="${hid?"Hidden spoiler item":esc(n)}" ${hid?'title="Spoiler: tap to reveal"':""} onerror="if(!this.dataset.f){this.dataset.f=1;this.src='${ICON_BASE}${slug(n)}.png'}else{this.parentNode.remove()}"></div>
     <h3 id="insp-h">${sp(n)}</h3>
     <div class="irow"><span class="tag ${v.cls}">${v.lab}</span>${it.v?`<span>Sells for <b>${it.v.toLocaleString("en-US")}</b></span>`:""}${per>0?`<span>${Math.round(per).toLocaleString("en-US")} per space</span>`:""}</div>
-    ${it.note?`<div class="irow">${esc(it.note)}</div>`:""}
+    ${it.note?`<div class="irow">${spt(it.note)}</div>`:""}
     <span class="icred">Item art © Fun Dog Studios, used with their permission.</span>`;
   try{d.showModal()}catch(e){d.setAttribute("open","")}
   document.getElementById("inspx").focus();
@@ -954,7 +960,7 @@ const ps=it=>it.s==="L"||!it.s||!it.v?-1:it.v/it.s;
 const perSpace=it=>it.s==="L"?"large bin":ps(it)>0?fmt(Math.round(ps(it))):"—";
 const sellCmp=(a,b)=>sortBy==="space"?(ps(b)-ps(a)||b.v-a.v):b.v-a.v;
 const uMark=it=>it.u?`<span class="unsure" role="img" aria-label="Unverified" title="Unverified. The reason is under the item name.">?</span>`:"";
-const uLine=it=>it.u?`<span class="ureason">? Unverified: ${it.uSpoil?spq(it.u):esc(it.u)}</span>`:"";
+const uLine=it=>it.u?`<span class="ureason">? Unverified: ${it.uSpoil?spq(it.u):spt(it.u)}</span>`:"";
 const barLine=it=>it.bar?`<span class="barnote">${spq(BAR_NOTE)}</span>`:"";
 const dogLine=it=>(it.q.some(x=>/^Tobacco Journey/.test(x[0]))?`<span class="barnote">${spq(TJ_ITEM)}</span>`:"")+(it.dog?`<span class="barnote">${spq("The Dog: "+(it.dog==="best"?"its best offering, brings the best box":it.dog==="lowest"?"lowest-tier offering":it.dog+"-tier offering for its loot box"))}</span>`:"");
 let filter="all";const q=document.getElementById("q");
@@ -979,7 +985,7 @@ function render(){
     it.q.filter(x=>x[2]).forEach(([s,a])=>parts.push(`<span class="rp">↻ ${spq(s)} ×${a}</span>`));
     let txt=parts.join(", ");
     if(it.c.length) txt+=(txt?" · ":"")+"<em>crafts</em> "+it.c.map(esc).join(", ");
-    html+=`<tr><td class="name">${ic(it.n)}${sp(it.n)}${uMark(it)}${it.note?`<small>${esc(it.note)}</small>`:""}${barLine(it)}${dogLine(it)}${uLine(it)}</td><td><span class="tag ${v.cls}">${v.lab}</span></td><td class="qty">${v.qty}</td><td class="val">${fmt(it.v)}</td><td class="val">${perSpace(it)}</td><td class="for">${txt||"—"}</td></tr>`;
+    html+=`<tr><td class="name">${ic(it.n)}${sp(it.n)}${uMark(it)}${it.note?`<small>${spt(it.note)}</small>`:""}${barLine(it)}${dogLine(it)}${uLine(it)}</td><td><span class="tag ${v.cls}">${v.lab}</span></td><td class="qty">${v.qty}</td><td class="val">${fmt(it.v)}</td><td class="val">${perSpace(it)}</td><td class="for">${txt||"—"}</td></tr>`;
   });
   document.getElementById("rows").innerHTML=html;
   document.getElementById("empty").hidden=n>0;
@@ -1062,7 +1068,7 @@ function renderMaps(){
   const best=r=>r.bestMaps.length&&r.bestMaps.length<=3?"best on "+r.bestMaps.map(i=>MAPS[i]).join(", "):"";
   const shown=showAllNeed?need:need.slice(0,30);
   const needRows=shown.map(r=>`<tr><td class="name">${ic(r.it.n)}${sp(r.it.n)}${uMark(r.it)}${tag(r)}<small>${[r.wt,best(r)].filter(Boolean).map(sp).join(" · ")}</small></td><td><span class="tag ${r.v.cls}">${r.v.lab}</span></td><td class="qty">${r.v.qty}</td></tr>`).join("");
-  const sellRows=sell.slice(0,25).map(r=>`<tr><td class="name">${ic(r.it.n)}${sp(r.it.n)}${uMark(r.it)}${tag(r)}<small>${sp(r.wt)}${r.it.note?" · "+esc(r.it.note):""}${sortBy==="space"&&ps(r.it)>0?" · "+fmt(Math.round(ps(r.it)))+" per space":""}</small></td><td class="val">${fmt(r.it.v)}</td></tr>`).join("");
+  const sellRows=sell.slice(0,25).map(r=>`<tr><td class="name">${ic(r.it.n)}${sp(r.it.n)}${uMark(r.it)}${tag(r)}<small>${sp(r.wt)}${r.it.note?" · "+spt(r.it.note):""}${sortBy==="space"&&ps(r.it)>0?" · "+fmt(Math.round(ps(r.it)))+" per space":""}</small></td><td class="val">${fmt(r.it.v)}</td></tr>`).join("");
   box.innerHTML=`<div style="min-width:0"><h3>Still needed · ${need.length}</h3><div class="table-box"><table><thead><tr><th>Item</th><th>Verdict</th><th>Keep</th></tr></thead><tbody>${needRows||`<tr><td colspan="3" class="empty">Nothing left to collect here.</td></tr>`}</tbody></table></div>${need.length>30?`<button class="reset" id="needall" type="button" style="margin-top:8px">${showAllNeed?"Show the top 30":"Show all "+need.length}</button>`:""}</div>
   <div style="min-width:0"><h3>Best to sell here</h3><div class="table-box"><table><thead><tr><th>Item</th><th class="r">Sells</th></tr></thead><tbody>${sellRows||`<tr><td colspan="2" class="empty">No sellables listed for these maps.</td></tr>`}</tbody></table></div></div>`;
 }
