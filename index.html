@@ -321,7 +321,27 @@ td.name{position:relative;padding-left:74px!important;height:60px}
 .icb:hover,.icb:focus-visible{border-color:var(--ink)}
 .ic{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 1px rgba(223,228,226,.45)) drop-shadow(0 1px 2px rgba(0,0,0,.6))}
 .ic.icsp{filter:blur(8px) grayscale(1)}
-@media (max-width:600px){td.name{padding-left:58px!important;height:56px}.icb{left:8px;top:8px;width:40px;height:40px;padding:2px}.mainlist td.name{padding-left:14px!important;height:auto}.mainlist .icb{display:none}}
+@media (max-width:600px){td.name{padding-left:58px!important;height:56px}.icb{left:8px;top:8px;width:40px;height:40px;padding:2px}}
+/* phone: the item list becomes cards (icon + name, then verdict and numbers), no sideways scrolling */
+@media (max-width:600px){
+  .mainlist{min-width:0;display:block}
+  .mainlist thead{display:none}
+  .mainlist tbody{display:block}
+  .mainlist tr{display:grid;grid-template-columns:58px auto minmax(0,1fr);align-items:center;row-gap:6px;padding:10px 0;border-bottom:1px solid #1e2729}
+  .mainlist td{border:0;padding:0 12px 0 0;min-width:0;overflow-wrap:anywhere}
+  .mainlist td.name{grid-column:1/-1;padding-left:58px!important;height:auto;min-height:44px}
+  .mainlist .icb{top:0}
+  .mainlist td.vd{grid-column:2}
+  .mainlist td.qty{grid-column:3;font-size:13px}
+  .mainlist td.val{grid-column:2;font-size:12px;color:var(--muted);text-align:left!important}
+  .mainlist td.val.ps{grid-column:3}
+  .mainlist td.for{grid-column:2/-1}
+  .mainlist .tag{font-size:18px;padding:3px 8px}
+  .mainlist td.for{font-size:12px}
+  .mainlist td[data-l]::before{content:attr(data-l) " ";color:var(--dim);font-size:11px;letter-spacing:.04em;text-transform:uppercase;margin-right:4px}
+  .mainlist td.none{display:none}
+}
+@media (max-width:370px){.mainlist tr{grid-template-columns:58px auto minmax(0,1fr)}.mainlist td.val.ps{grid-column:2/-1}.mainlist td{overflow-wrap:anywhere}}
 dialog#insp{width:min(380px,calc(100% - 32px));padding:0;border:2px solid var(--rail);background:var(--panel);color:var(--ink)}
 dialog#insp::backdrop{background:rgba(5,8,9,.82)}
 .insp{display:flex;flex-direction:column;gap:12px;padding:18px;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px)}
@@ -464,7 +484,7 @@ footer:has(.fmeta){max-width:118ch}
 
 <footer>
   <dl class="fmeta">
-    <dt>Version</dt><dd>Stash Ledger v1.06 · <b>Made by scavs, for scavs</b> · part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · packing for a raid? Try <a href="../raid-loadout/">Raid Loadout</a></dd>
+    <dt>Version</dt><dd>Stash Ledger v1.07 · <b>Made by scavs, for scavs</b> · part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · packing for a raid? Try <a href="../raid-loadout/">Raid Loadout</a></dd>
     <dt>Mistakes</dt><dd><b>?</b> = unverified · <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Spotted one? Open an issue</a></dd>
     <dt>License</dt><dd>Code: <a href="https://github.com/winter-scav-tools/stash-ledger/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0</a> · Data: <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026 (game patch <span id="gamepatch">0.9.5.3</span>)</dd>
     <dt>Icons</dt><dd>© Fun Dog Studios, used with their permission. <b>Not covered by the GPL</b>: don't reuse them.</dd>
@@ -985,7 +1005,7 @@ function render(){
     it.q.filter(x=>x[2]).forEach(([s,a])=>parts.push(`<span class="rp">↻ ${spq(s)} ×${a}</span>`));
     let txt=parts.join(", ");
     if(it.c.length) txt+=(txt?" · ":"")+"<em>crafts</em> "+it.c.map(esc).join(", ");
-    html+=`<tr><td class="name">${ic(it.n)}${sp(it.n)}${uMark(it)}${it.note?`<small>${spt(it.note)}</small>`:""}${barLine(it)}${dogLine(it)}${uLine(it)}</td><td><span class="tag ${v.cls}">${v.lab}</span></td><td class="qty">${v.qty}</td><td class="val">${fmt(it.v)}</td><td class="val">${perSpace(it)}</td><td class="for">${txt||"—"}</td></tr>`;
+    html+=`<tr><td class="name">${ic(it.n)}${sp(it.n)}${uMark(it)}${it.note?`<small>${spt(it.note)}</small>`:""}${barLine(it)}${dogLine(it)}${uLine(it)}</td><td class="vd"><span class="tag ${v.cls}">${v.lab}</span></td><td class="qty${v.qty==="—"?" none":""}" data-l="Keep">${v.qty}</td><td class="val" data-l="Sells">${fmt(it.v)}</td><td class="val ps" data-l="Per space">${perSpace(it)}</td><td class="for${txt?"":" none"}" data-l="For">${txt||"—"}</td></tr>`;
   });
   document.getElementById("rows").innerHTML=html;
   document.getElementById("empty").hidden=n>0;
