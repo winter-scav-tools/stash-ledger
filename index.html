@@ -93,6 +93,9 @@ h3{margin:0;font:400 20px/1.1 var(--f-display);letter-spacing:.08em;text-transfo
 .pair{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--amber);padding:10px 12px;font-size:13px;min-width:0}
 .pair .s{color:var(--ink);overflow-wrap:anywhere} .pair .k{color:var(--red);text-align:right;overflow-wrap:anywhere}
 .pair i{font-style:normal;color:var(--muted);font:12px var(--f-body)}
+.tics{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.pair .k .tics{justify-content:flex-end}
+.icb.ici{position:static;width:36px;height:36px;padding:2px}
 
 /* workbench */
 .bench{display:grid;grid-template-columns:300px minmax(0,1fr);gap:24px;align-items:start}
@@ -396,20 +399,11 @@ footer:has(.fmeta){max-width:118ch}
 <div class="viewopts"><button class="cbbtn" id="cbbtn" type="button" aria-pressed="false"><span class="dot" aria-hidden="true"></span>Colorblind mode <b id="cbstate">[ OFF ]</b></button><span class="cbhint" id="cbhint">Swaps the red and amber for yellow and blue, which stay easy to tell apart with red-green colorblindness.</span></div>
 
 <div id="panetop" aria-hidden="true"></div>
-<details class="mapbox" id="trapbox" data-pane="traps" open>
+<details class="mapbox" id="trapbox" data-pane="traps">
   <summary><span>LOOKALIKE TRAPS</span><small>8 pairs that get sold by accident</small></summary>
   <div class="mapbody">
-  <p>The left one sells. The right one looks the same in a hurry and is needed.</p>
-  <div class="trap-grid">
-    <div class="pair"><span class="s">Liquid Coolant<br><i>sell</i></span><i>≠</i><span class="k">Liquid Cooling Unit<br><i>Water Bots V1</i></span></div>
-    <div class="pair"><span class="s">Power Drill<br><i>sell</i></span><i>≠</i><span class="k">Hand Drill · Rotary Hammer<br><i>Quarters, story quests</i></span></div>
-    <div class="pair"><span class="s">Battery (plain)<br><i>sell</i></span><i>≠</i><span class="k">Military · Rechargeable · Heavy-Duty<br><i>Turrets, TV, crafting</i></span></div>
-    <div class="pair"><span class="s">Deep Fried Coffee<br><i>sell</i></span><i>≠</i><span class="k">Preserved Cryo Coffee<br><i>Shrine</i></span></div>
-    <div class="pair"><span class="s">Water Thief Mask (large)<br><i>sell</i></span><i>≠</i><span class="k">Masks "Bozo" "Oni" "Thirsty"<br><i>Range v3, Shrine</i></span></div>
-    <div class="pair"><span class="s">Construction Glue · Duct Tape<br><i>sell</i></span><i>≠</i><span class="k">Glue · Super Glue · Masking Tape<br><i>Dog House, quests, Range</i></span></div>
-    <div class="pair"><span class="s">Mystical Tech Totem (small)<br><i>sell</i></span><i>≠</i><span class="k">Mystical Tech Totem (Large)<br><i>repeatable quests</i></span></div>
-    <div class="pair"><span class="s">Hard Drive · High Capacity HD<br><i>sell</i></span><i>≠</i><span class="k">Quantum · Military · Exo Hard Drive<br><i>TV, Cradle, crafting, quests</i></span></div>
-  </div>
+  <p>The left one sells. The right one looks the same in a hurry and is needed. Tap an icon to see it big.</p>
+  <div class="trap-grid" id="traps"></div>
   </div>
 </details>
 
@@ -484,7 +478,7 @@ footer:has(.fmeta){max-width:118ch}
 
 <footer>
   <dl class="fmeta">
-    <dt>Version</dt><dd>Stash Ledger v1.07 · <b>Made by scavs, for scavs</b> · part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · packing for a raid? Try <a href="../raid-loadout/">Raid Loadout</a></dd>
+    <dt>Version</dt><dd>Stash Ledger v1.08 · <b>Made by scavs, for scavs</b> · part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · packing for a raid? Try <a href="../raid-loadout/">Raid Loadout</a></dd>
     <dt>Mistakes</dt><dd><b>?</b> = unverified · <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Spotted one? Open an issue</a></dd>
     <dt>License</dt><dd>Code: <a href="https://github.com/winter-scav-tools/stash-ledger/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0</a> · Data: <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026 (game patch <span id="gamepatch">0.9.5.3</span>)</dd>
     <dt>Icons</dt><dd>© Fun Dog Studios, used with their permission. <b>Not covered by the GPL</b>: don't reuse them.</dd>
@@ -944,6 +938,19 @@ function drawProgress(){
 }
 function updTogo(){drawGoalOptions();const left=Object.keys(COST).filter(u=>!done[u]).reduce((s,u)=>s+COST[u][0],0);
   document.getElementById("togo").textContent=left?kfmt(left)+" credits left to build everything":"Everything built";}
+// Lookalike traps: [items you can sell], [the lookalikes you need], what needs them. [item name, short label]
+const TRAPS=[
+ [[["Liquid Coolant"]],[["Liquid Cooling Unit"]],"Water Bots V1"],
+ [[["Power Drill"]],[["Hand Drill"],["Rotary Hammer"]],"Quarters, story quests"],
+ [[["Battery","Battery (plain)"]],[["Military Battery","Military"],["Rechargeable Battery","Rechargeable"],["Heavy-Duty Battery","Heavy-Duty"]],"Turrets, TV, crafting"],
+ [[["Deep Fried Coffee"]],[["Preserved Cryo Coffee"]],"Shrine"],
+ [[["Water Thief Mask (large)"]],[['Water Thief\'s Mask "Bozo"','"Bozo"'],['Water Thief\'s Mask "Oni"','"Oni"'],['Water Thief\'s Mask "Thirsty"','"Thirsty"']],"Range v3, Shrine"],
+ [[["Construction Glue"],["Duct Tape"]],[["Glue"],["Super Glue"],["Masking Tape"]],"Dog House, quests, Range"],
+ [[["Mystical Tech Totem","Mystical Tech Totem (small)"]],[["Mystical Tech Totem (Large)"]],"repeatable quests"],
+ [[["Hard Drive"],["High Capacity Hard Drive","High Capacity HD"]],[["Quantum Hard Drive","Quantum"],["Military Hard Drive","Military"],["Exo Hard Drive","Exo"]],"TV, Cradle, crafting, quests"]];
+const trapSide=list=>`<span class="tics">${list.map(([n])=>ic(n).replace('class="icb"','class="icb ici"')).join("")}</span>${list.map(([n,l])=>sp(l||n)).join(" · ")}`;
+function drawTraps(){const el=document.getElementById("traps");if(!el)return;
+  el.innerHTML=TRAPS.map(([sell,keep,why])=>`<div class="pair"><span class="s">${trapSide(sell)}<br><i>sell</i></span><i>≠</i><span class="k">${trapSide(keep)}<br><i>${esc(why)}</i></span></div>`).join("")}
 function openInspect(n){
   const it=ITEMS.find(x=>x.n===n);if(!it)return;
   const d=document.getElementById("insp"),hid=sf&&sp(n)!==esc(n),v=verdict(it),per=ps(it);
@@ -986,6 +993,7 @@ const dogLine=it=>(it.q.some(x=>/^Tobacco Journey/.test(x[0]))?`<span class="bar
 let filter="all";const q=document.getElementById("q");
 const ORDER={free:0,always:1,keep:2,craft:3};
 function render(){
+  drawTraps();
   const term=q.value.trim().toLowerCase();let n=0,freed=0,html="";
   const list=ITEMS.map(it=>({it,v:verdict(it)}));
   list.forEach(x=>{if(x.v.k==="free")freed++});
@@ -1124,7 +1132,7 @@ document.getElementById("ups").addEventListener("click",e=>{const t=e.target.clo
 document.getElementById("qs").addEventListener("click",e=>{const s=e.target.closest(".chain>summary");if(!s||e.target.closest(".spoil"))return;const d=s.parentElement;ucol[d.dataset.g]=d.open;try{localStorage.setItem("tfw-ucol",JSON.stringify(ucol))}catch(e){}});
 document.getElementById("ups").addEventListener("click",e=>{const s=e.target.closest(".ugrp>summary");if(!s)return;const d=s.parentElement;ucol[d.dataset.g]=d.open;try{localStorage.setItem("tfw-ucol",JSON.stringify(ucol))}catch(e){}});
 const tb=document.getElementById("trapbox");
-try{if(localStorage.getItem("tfw-trapopen")==="0")tb.open=false}catch(e){}
+try{if(localStorage.getItem("tfw-trapopen")==="1")tb.open=true}catch(e){}
 tb.addEventListener("toggle",()=>{try{localStorage.setItem("tfw-trapopen",tb.open?"1":"0")}catch(e){}});
 const mb=document.getElementById("mapbox");
 try{if(localStorage.getItem("tfw-mapopen")==="1")mb.open=true}catch(e){}
