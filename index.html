@@ -252,6 +252,25 @@ td.for .rp{color:var(--frost)}
 .ugrp>summary .cnt.full{color:var(--frost)}
 .goalrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .goalrow label{font:400 22px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--red)}
+#findq{flex:1 1 260px;min-width:0;max-width:520px;font:14px var(--f-body);padding:9px 12px;border:1px solid var(--rail);background:var(--bg);color:var(--ink)}
+#findq:focus{border-color:var(--red);outline:none}
+#findres:empty{display:none}
+.findsug{display:flex;flex-wrap:wrap;gap:6px}
+.findsug button{font:13px var(--f-body);padding:6px 10px;border:1px solid var(--rail);background:var(--panel);color:var(--ink);cursor:pointer}
+.findsug button:hover,.findsug button:focus-visible{border-color:var(--red)}
+.findbox{display:flex;flex-direction:column;gap:10px;padding:14px;border:1px solid var(--line);border-left:4px solid var(--frost);background:var(--bg)}
+.findhead{position:relative;padding-left:62px;min-height:48px;display:flex;flex-direction:column;gap:4px;justify-content:center}
+.findhead .icb{left:0;top:0}
+.findhead b{font-size:15px}
+.findsum{font-size:12px;color:var(--muted)}
+.findsum b{color:var(--ink);font-weight:500}
+.wl{display:grid;grid-template-columns:max-content max-content 1fr;gap:6px 14px;align-items:baseline;font-size:13px;margin:0}
+.wl .m{color:var(--ink);font-weight:500}
+.wl .lv{font:15px/1 var(--f-display);letter-spacing:.12em;color:var(--frost);white-space:nowrap}
+.wl .lv i{font-style:normal;color:var(--rail)}
+.wl .src{color:var(--muted)}
+@media (max-width:480px){.wl{grid-template-columns:max-content 1fr}.wl .src{grid-column:1/-1;margin-top:-4px;padding-bottom:4px;border-bottom:1px solid var(--line)}}
+.insp .wl{font-size:12px}
 #goalsel{flex:1 1 260px;min-width:0;max-width:520px;font:14px var(--f-body);padding:9px 12px;border:1px solid var(--rail);background:var(--bg);color:var(--ink)}
 #goalres:empty{display:none}
 .goalbox{display:flex;flex-direction:column;gap:12px;padding:14px;border:1px solid var(--line);border-left:4px solid var(--red);background:var(--bg)}
@@ -345,7 +364,7 @@ td.name{position:relative;padding-left:74px!important;height:60px}
   .mainlist td.none{display:none}
 }
 @media (max-width:370px){.mainlist tr{grid-template-columns:58px auto minmax(0,1fr)}.mainlist td.val.ps{grid-column:2/-1}.mainlist td{overflow-wrap:anywhere}}
-dialog#insp{width:min(380px,calc(100% - 32px));padding:0;border:2px solid var(--rail);background:var(--panel);color:var(--ink)}
+dialog#insp{width:min(380px,calc(100% - 32px));max-height:calc(100dvh - 32px);overflow:auto;padding:0;border:2px solid var(--rail);background:var(--panel);color:var(--ink)}
 dialog#insp::backdrop{background:rgba(5,8,9,.82)}
 .insp{display:flex;flex-direction:column;gap:12px;padding:18px;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px)}
 .insp .ihead{display:flex;justify-content:space-between;align-items:center;font:20px/1 var(--f-display);letter-spacing:.08em;color:var(--dim)}
@@ -410,7 +429,9 @@ footer:has(.fmeta){max-width:118ch}
 <details class="mapbox" id="mapbox" data-pane="raid">
   <summary><span>RAID PLANNER</span><small id="mapsum">pick a goal or a map</small></summary>
   <div class="mapbody">
-    <p>Two ways to use it. Pick a <b>goal</b> to see what that upgrade or quest still needs and which map covers the most of it. Or skip the goal and just tick the maps you're running to browse what's worth grabbing there.</p>
+    <p><b>Find</b> one item to see where to farm it. Pick a <b>goal</b> to see what an upgrade or quest still needs and which map covers the most of it. Or just tick the maps you're running to browse what's worth grabbing there.</p>
+    <div class="goalrow findrow"><label for="findq">Find</label><input id="findq" type="search" autocomplete="off" spellcheck="false" placeholder="> where do I farm…" aria-label="Find an item"></div>
+    <div id="findres" aria-live="polite"></div>
     <div class="goalrow"><label for="goalsel">Goal</label><select id="goalsel"></select></div>
     <div id="goalres"></div>
     <h3 class="maphead">Browse by map</h3>
@@ -478,7 +499,7 @@ footer:has(.fmeta){max-width:118ch}
 
 <footer>
   <dl class="fmeta">
-    <dt>Version</dt><dd>Stash Ledger v1.08 · <b>Made by scavs, for scavs</b> · part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · packing for a raid? Try <a href="../raid-loadout/">Raid Loadout</a></dd>
+    <dt>Version</dt><dd>Stash Ledger v1.09 · <b>Made by scavs, for scavs</b> · part of <a href="https://github.com/winter-scav-tools" target="_blank" rel="noopener">Winter Scav Tools</a> · packing for a raid? Try <a href="../raid-loadout/">Raid Loadout</a></dd>
     <dt>Mistakes</dt><dd><b>?</b> = unverified · <a href="https://github.com/winter-scav-tools/stash-ledger/issues/new" target="_blank" rel="noopener">Spotted one? Open an issue</a></dd>
     <dt>License</dt><dd>Code: <a href="https://github.com/winter-scav-tools/stash-ledger/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0</a> · Data: <a href="https://theforeverwinter.wiki.gg/" target="_blank" rel="noopener">The Forever Winter Wiki</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, checked 26 Oct 2026 (game patch <span id="gamepatch">0.9.5.3</span>)</dd>
     <dt>Icons</dt><dd>© Fun Dog Studios, used with their permission. <b>Not covered by the GPL</b>: don't reuse them.</dd>
@@ -951,6 +972,35 @@ const TRAPS=[
 const trapSide=list=>`<span class="tics">${list.map(([n])=>ic(n).replace('class="icb"','class="icb ici"')).join("")}</span>${list.map(([n,l])=>sp(l||n)).join(" · ")}`;
 function drawTraps(){const el=document.getElementById("traps");if(!el)return;
   el.innerHTML=TRAPS.map(([sell,keep,why])=>`<div class="pair"><span class="s">${trapSide(sell)}<br><i>sell</i></span><i>≠</i><span class="k">${trapSide(keep)}<br><i>${esc(why)}</i></span></div>`).join("")}
+// ---- where to farm one item (Find box + Inspect) ----
+const LV=["","rarely","sometimes","often"];
+const lvBar=v=>`<span class="lv" title="${LV[v]}">${"▮".repeat(v)}<i>${"▮".repeat(3-v)}</i></span>`;
+function whereRows(n,limit){const L=lvOf(n);if(!L)return null;
+  const rows=L.map((v,i)=>({v,i})).filter(x=>x.v).sort((a,b)=>b.v-a.v||a.i-b.i);
+  return {rows:limit?rows.slice(0,limit):rows,total:rows.length}}
+function whereHtml(n,limit){const w=whereRows(n,limit);
+  if(!w||!w.total){const it=ITEMS.find(x=>x.n===n);return `<span class="findsum">No spawn data on the wiki for this one${it&&it.note?` (${spt(it.note)})`:""}. It may come from a quest, a boss or crafting.</span>`}
+  return `<dl class="wl">${w.rows.map(({v,i})=>`<dt class="m">${esc(MAPS[i])}</dt><dd style="margin:0">${lvBar(v)}</dd><dd class="src" style="margin:0">${sp(srcOn(n,i)||"")}</dd>`).join("")}</dl>${limit&&w.total>limit?`<span class="findsum">+${w.total-limit} more map${w.total-limit===1?"":"s"}. Use Find in the Raid planner for the full list.</span>`:""}`}
+function findSummary(n){const L=lvOf(n);if(!L)return "";const crates=new Set(),enemies=new Set();
+  L.forEach((v,i)=>{if(!v)return;const s=spawnOf(n).split("|");const c=pick(s[1],i),u=pick(s[2],i);
+    if(c){const nm=NAMES[B64.indexOf(c)];if(nm)crates.add(nm==="Ground"?"on the ground":nm==="Any container"?"any container":nm)}
+    if(u)enemies.add(u==="*"?"most enemy bodies":NAMES[B64.indexOf(u)])});
+  const parts=[];if(crates.size)parts.push(`<b>Crates:</b> ${[...crates].map(sp).join(", ")}`);if(enemies.size)parts.push(`<b>Enemies:</b> ${[...enemies].map(sp).join(", ")}`);
+  return parts.length?`<span class="findsum">${parts.join(" · ")}</span>`:""}
+const findHidden=it=>sf&&sp(it.n)!==esc(it.n);
+function showFind(n){const it=ITEMS.find(x=>x.n===n);const box=document.getElementById("findres");if(!it){box.innerHTML="";return}
+  const v=verdict(it),w=whereRows(n),top=w&&w.rows.slice(0,3).map(x=>x.i);
+  box.innerHTML=`<div class="findbox"><div class="findhead">${ic(n)}<b>${sp(n)}</b><span><span class="tag ${v.cls}" style="font-size:16px;padding:2px 7px">${v.lab}</span></span></div>
+    ${findSummary(n)}${whereHtml(n)}
+    ${w&&w.total?(new Set(w.rows.map(x=>x.v)).size===1?`<span class="findsum">About as common on every map it shows up on, so pick by the crate or enemy you farm best.</span>`:`<span class="findsum">▮▮▮ often · ▮▮ sometimes · ▮ rarely, compared with this item's other maps.</span>`):""}
+    ${top&&top.length?`<div class="bkrow"><button class="reset" type="button" id="findbrowse" data-maps="${top.join(",")}">Browse ${top.length===1?"that map":"the top "+top.length+" maps"} below</button></div>`:""}</div>`}
+function findSuggest(q){const box=document.getElementById("findres");q=q.trim().toLowerCase();
+  if(q.length<2){box.innerHTML="";return}
+  const list=ITEMS.filter(it=>!findHidden(it)&&it.n.toLowerCase().includes(q)).sort((a,b)=>(a.n.toLowerCase().startsWith(q)?0:1)-(b.n.toLowerCase().startsWith(q)?0:1)||a.n.localeCompare(b.n));
+  const exact=list.find(it=>it.n.toLowerCase()===q);
+  if(exact||list.length===1){showFind((exact||list[0]).n);return}
+  const hid=!list.length&&sf&&ITEMS.some(it=>findHidden(it)&&it.n.toLowerCase().includes(q));
+  box.innerHTML=hid?`<span class="findsum">That item is hidden while spoiler-free mode is on.</span>`:list.length?`<div class="findsug">${list.slice(0,8).map(it=>`<button type="button" data-find="${esc(it.n)}">${esc(it.n)}</button>`).join("")}${list.length>8?`<span class="findsum">+${list.length-8} more, keep typing</span>`:""}</div>`:`<span class="findsum">No item called that on the list. Weapons, ammo and attachments are in Raid Loadout.</span>`}
 function openInspect(n){
   const it=ITEMS.find(x=>x.n===n);if(!it)return;
   const d=document.getElementById("insp"),hid=sf&&sp(n)!==esc(n),v=verdict(it),per=ps(it);
@@ -959,6 +1009,7 @@ function openInspect(n){
     <h3 id="insp-h">${sp(n)}</h3>
     <div class="irow"><span class="tag ${v.cls}">${v.lab}</span>${it.v?`<span>Sells for <b>${it.v.toLocaleString("en-US")}</b></span>`:""}${per>0?`<span>${Math.round(per).toLocaleString("en-US")} per space</span>`:""}</div>
     ${it.note?`<div class="irow">${spt(it.note)}</div>`:""}
+    <div class="irow" style="flex-direction:column;align-items:stretch;gap:6px"><b style="font-weight:500;color:var(--ink)">Where to find it</b>${whereHtml(n,3)}</div>
     <span class="icred">Item art © Fun Dog Studios, used with their permission.</span>`;
   try{d.showModal()}catch(e){d.setAttribute("open","")}
   document.getElementById("inspx").focus();
@@ -1126,6 +1177,11 @@ document.getElementById("goalres").addEventListener("change",e=>{const t=e.targe
   if(t.dataset.have!==undefined)setHave(t.dataset.have,t.value,+t.dataset.need);
   else if(t.dataset.gotall!==undefined)setHave(t.dataset.gotall,t.checked?+t.dataset.need:0,+t.dataset.need)});
 document.getElementById("goalres").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.dataset.have!==undefined)e.target.blur()});
+const findq=document.getElementById("findq");
+findq.addEventListener("input",()=>findSuggest(findq.value));
+document.getElementById("findres").addEventListener("click",e=>{
+  const s=e.target.closest("[data-find]");if(s){findq.value=s.dataset.find;showFind(s.dataset.find);return}
+  const br=e.target.closest("#findbrowse");if(br){selMaps=br.dataset.maps.split(",").map(Number);saveMaps();drawMapChecks();renderMaps();document.getElementById("mapchecks").scrollIntoView({behavior:"smooth",block:"nearest"})}});
 document.getElementById("goalres").addEventListener("click",e=>{const b=e.target.closest(".run");if(!b)return;const i=+b.dataset.run;selMaps=[i];saveMaps();drawMapChecks();renderMaps();document.getElementById("mapchecks").scrollIntoView({behavior:"smooth",block:"nearest"})});
 document.getElementById("mapres").addEventListener("click",e=>{if(e.target.id==="needall"){showAllNeed=!showAllNeed;renderMaps()}});
 document.getElementById("ups").addEventListener("click",e=>{const t=e.target.closest(".tgt");if(t){e.preventDefault();setGoal(goal===t.dataset.goal?"":t.dataset.goal);return}});
