@@ -1339,9 +1339,10 @@ async function syncPull(){
   if(!syncCode||syncBusy)return;syncBusy=true;
   try{const {status,j}=await api("GET");
     if(status===200){
-      if(j.rev>syncRev){ if(syncLast&&ledgerPart(snap())!==ledgerPart(syncLast)){syncClash=j}else{applyState(j.data,false);markSynced(j.rev,j.updated,JSON.stringify(j.data))} }
-      else if(j.rev===syncRev){syncState="ok";syncBusy=false;if(dirty())await syncPush();return}
+      if(j.rev===syncRev){syncState="ok";syncBusy=false;if(dirty())await syncPush();return}
+      else if(syncLast&&ledgerPart(snap())!==ledgerPart(syncLast)){syncClash=j}else{applyState(j.data,false);markSynced(j.rev,j.updated,JSON.stringify(j.data))}
     } else if(status===404){syncState="gone"}
+    else if(status===429){if(syncState!=="gone")syncState="ok"}
     else syncState="err";
   }catch(e){syncState="off"}
   syncBusy=false;drawSync();
@@ -1354,7 +1355,7 @@ async function syncPush(force){
     if(status===200||status===201)markSynced(j.rev,j.updated,text);
     else if(status===409){ if(j.data&&canon(j.data)===canon(JSON.parse(text)))markSynced(j.rev,j.updated,text);
       else if(j.data&&ledgerPart(j.data)===ledgerPart(syncLast)){applyLo(j.data.lo);markSynced(j.rev,j.updated,JSON.stringify(j.data))}
-      else syncClash=j; }
+      else if(j.data)syncClash=j;else syncState="err"; }
     else if(status===429)syncState="ok";
     else if(status===404){syncState="gone"}
     else syncState="err";
@@ -1407,7 +1408,10 @@ document.getElementById("syncbox").addEventListener("click",async e=>{
     clearTimeout(syncDelArm);syncDelArm=0;try{await api("DELETE")}catch(_){}forgetSync()}
   else if(id==="syncuseother"&&syncClash){applyState(syncClash.data,true);markSynced(syncClash.rev,syncClash.updated,snap());syncClash=null}
   else if(id==="synckeep"&&syncClash){syncRev=syncClash.rev;syncClash=null;syncBusy=false;await syncPush(true)}
-  else if(id==="syncreup"){syncRev=0;syncLast="";try{const {status,j}=await api("PUT",{data:getState(),baseRev:0});if(status===201)markSynced(j.rev,j.updated,snap())}catch(_){syncState="off"}}
+  else if(id==="syncreup"&&!syncBusy){syncBusy=true;syncRev=0;syncLast="";
+    try{const {status,j}=await api("PUT",{data:getState(),baseRev:0});
+      if(status===201)markSynced(j.rev,j.updated,snap());else if(status===409&&j.data)syncClash=j;else if(status===429)syncState="ok";else syncState="err"}
+    catch(_){syncState="off"}syncBusy=false}
   drawSync();
 });
 document.getElementById("syncbox").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="syncin"){e.preventDefault();document.getElementById("syncgo").click()}});
