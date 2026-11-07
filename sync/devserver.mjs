@@ -5,7 +5,7 @@ class FakeD1{constructor(){this.rows=new Map()}prepare(sql){const db=this;return
  async first(){const r=db.rows.get(a[a.length-1]);return r?{...r}:null},
  async run(){if(sql.startsWith("UPDATE saves SET seen")){const r=db.rows.get(a[1]);if(r)r.seen=a[0];return{meta:{changes:r?1:0}}}
   if(sql.startsWith("UPDATE saves SET data")){const[data,u,s,id,rev]=a;const r=db.rows.get(id);if(r&&r.rev===rev){Object.assign(r,{data,rev:rev+1,updated:u,seen:s});return{meta:{changes:1}}}return{meta:{changes:0}}}
-  if(sql.startsWith("INSERT")){const[id,data,u,s]=a;db.rows.set(id,{data,rev:1,updated:u,seen:s});return{meta:{changes:1}}}
+  if(sql.startsWith("INSERT")){const[id,data,u,s]=a;if(db.rows.has(id))return{meta:{changes:0}};db.rows.set(id,{data,rev:1,updated:u,seen:s});return{meta:{changes:1}}}
   if(sql.startsWith("DELETE FROM saves WHERE id")){db.rows.delete(a[0]);return{meta:{changes:1}}}return{meta:{}}}}}}}}
 const env={DB:new FakeD1(),ALLOWED_ORIGINS:`http://localhost:${PORT}`};
 http.createServer(async(req,res)=>{
@@ -15,6 +15,6 @@ http.createServer(async(req,res)=>{
   res.writeHead(404);res.end()}).listen(PORT+1); // API on its own port: cross-origin, like github.io -> workers.dev
 http.createServer(async(req,res)=>{
   if(req.url==="/__db"){res.end(JSON.stringify([...env.DB.rows.values()].map(r=>({rev:r.rev,data:JSON.parse(r.data)}))));return}
-  let html=fs.readFileSync(PAGE,"utf8").replace('const SYNC_API="";',`const SYNC_API="http://localhost:${PORT+1}";`);
+  let html=fs.readFileSync(PAGE,"utf8").replace(/const SYNC_API="[^"]*";/,`const SYNC_API="http://localhost:${PORT+1}";`)  // never the live server;
   res.writeHead(200,{"Content-Type":"text/html; charset=utf-8"});res.end(html);
 }).listen(PORT,()=>console.log("listening "+PORT));

@@ -13,6 +13,19 @@ binding = "DB"
 database_name = "stash-ledger-sync"
 database_id = "02f71384-d8ea-4d3d-b8d0-546c1e3b58d5"
 
+# Per-IP rate limits (Workers Rate Limiting). CORS doesn't stop scripts, these do.
+# Period can only be 10 or 60 seconds. namespace_id is just a number, unique within the Cloudflare account.
+# The page pushes at most once per 2.5 s (24 a minute) and simply retries after a 429, so 30 leaves room.
+[[ratelimits]]
+name = "LIMITER"           # every request
+namespace_id = "2611"
+simple = { limit = 30, period = 60 }
+
+[[ratelimits]]
+name = "CREATE_LIMITER"    # only requests that make a NEW save (a normal player makes one, ever)
+namespace_id = "2612"
+simple = { limit = 3, period = 60 }
+
 [triggers]
 crons = ["17 3 * * *"]   # daily clean-up of saves unused for 180 days
 
